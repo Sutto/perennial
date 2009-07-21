@@ -5,12 +5,23 @@ class SettingsTest < Test::Unit::TestCase
   context 'default settings' do
     
     setup do
-      
+      Perennial::Settings.setup!
     end
     
-    should "default the application root to the parent folder of perennial"
+    should "default the application root to the parent folder of perennial" do
+      assert_equal __FILE__.to_pathname.dirname.join("..").expand_path,
+                   Perennial::Settings.root.to_pathname
+      Perennial::Settings.root = "/awesome/sauce"
+      assert_equal "/awesome/sauce", Perennial::Settings.root
+    end
     
-    should "default daemonized to false"
+    should "default daemonized to false" do
+      assert !Perennial::Settings.daemon?
+      Perennial::Settings.daemon = true
+      assert Perennial::Settings.daemon?
+      Perennial::Settings.daemon = false
+      assert !Perennial::Settings.daemon?
+    end
     
   end
   

@@ -4,7 +4,7 @@ module Perennial
   # A simple
   class Settings
     
-    cattr_accessor :configuration, :log_level, :verbose, :daemon, :root
+    cattr_accessor :configuration, :log_level, :verbose, :daemon
                    
     @@verbose   = false
     @@log_level = :info
@@ -14,6 +14,10 @@ module Perennial
       
       def daemon?
         !!@@daemon
+      end
+      
+      def root=(path)
+        @@root = path.to_str
       end
       
       def root
