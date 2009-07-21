@@ -21,7 +21,6 @@ class Inflector
 end
 
 module Kernel
-  
   # Shorthand for lambda
   # e.g. L{|r| puts r}
   def L(&blk)
@@ -33,7 +32,6 @@ module Kernel
   def P(&blk)
     Proc.new(&blk)
   end
-  
 end
 
 class String
@@ -45,12 +43,27 @@ class String
     Inflector.underscore(self)
   end
   
+  def to_path
+    Pathname.new(self)
+  end
 end
 
 class Array
-  
   def extract_options!
     last.is_a?(Hash) ? pop : {}
   end
+end
+
+class Hash
+  def symbolize_keys
+    hash = self.dup
+    hash.symbolize_keys!
+    return hash
+  end
   
+  def symbolize_keys!
+    hash = {}
+    self.each_pair { |k,v| hash[k.to_sym] = v }
+    replace hash
+  end
 end

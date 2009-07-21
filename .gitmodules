@@ -1,0 +1,3 @@
+[submodule "vendor/fakefs"]
+	path = vendor/fakefs
+	url = git://github.com/defunkt/fakefs.git
