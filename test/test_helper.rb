@@ -8,7 +8,9 @@ require 'rr'
 require 'redgreen' if RUBY_VERSION < "1.9"
 
 require 'pathname'
-require Pathname.new(__FILE__).dirname.join("..", "lib", "perennial").expand_path
+root_directory = Pathname.new(__FILE__).dirname.join("..").expand_path
+require root_directory.join("lib", "perennial")
+require root_directory.join("vendor", "fakefs", "lib", "fakefs")
 
 class Test::Unit::TestCase
   include RR::Adapters::TestUnit

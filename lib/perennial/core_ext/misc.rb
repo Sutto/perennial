@@ -43,7 +43,7 @@ class String
     Inflector.underscore(self)
   end
   
-  def to_path
+  def to_pathname
     Pathname.new(self)
   end
 end

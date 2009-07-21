@@ -17,7 +17,7 @@ module Perennial
       end
       
       def root
-        @@root ||= File.expand_path(File.dirname(__FILE__) / ".." / ".."))
+        @@root ||= File.expand_path(File.dirname(__FILE__) / ".." / "..")
       end
       
       def setup?
@@ -30,12 +30,15 @@ module Perennial
       
       def setup!(options = {})
         @@configuration = {}
-        loaded_yaml = YAML.load_file(root / "config" / "settings.yml")
-        loaded_options = loaded_yaml["default"].merge(options)
-        @@configuration.merge!(loaded_options)
+        settings_file = root / "config" / "settings.yml"
+        if File.exist?(settings_file)
+          loaded_yaml = YAML.load(File.read(settings_file))
+          @@configuration.merge! loaded_yaml["default"]
+        end
+        @@configuration.merge! options
         @@configuration.symbolize_keys!
         # Generate a module 
-        mod = generate_settings_accessor_mixin        
+        mod = generate_settings_accessor_mixin
         extend  mod
         include mod
         @@setup = true

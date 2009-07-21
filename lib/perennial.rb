@@ -11,5 +11,6 @@ module Perennial
   autoload :Dispatchable, 'perennial/dispatchable'
   autoload :Logger,       'perennial/logger'
   autoload :Loggable,     'perennial/loggable'
+  autoload :Settings,     'perennial/settings'
   
 end
