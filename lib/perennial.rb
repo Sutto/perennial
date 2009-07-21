@@ -2,9 +2,13 @@
 # nicer to require perennial-related libraries.
 $LOAD_PATH.unshift(File.dirname(__FILE__))
 
+require 'perennial/core_ext'
+require 'perennial/exceptions'
+
 module Perennial
   
-  autoload :Logger,   'perennial/logger'
-  autoload :Loggable, 'perennial/loggable'
+  autoload :Dispatchable, 'perennial/dispatchable'
+  autoload :Logger,       'perennial/logger'
+  autoload :Loggable,     'perennial/loggable'
   
 end
