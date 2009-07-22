@@ -1,7 +1,6 @@
 require 'yaml'
 
 module Perennial
-  # A simple
   class Settings
     
     cattr_accessor :configuration, :log_level, :verbose, :daemon
@@ -14,6 +13,10 @@ module Perennial
       
       def daemon?
         !!@@daemon
+      end
+      
+      def verbose?
+        !!@@verbose
       end
       
       def root=(path)

@@ -1,18 +1,36 @@
 module Perennial
   class Logger
     
-    cattr_accessor :logger
+    cattr_accessor :logger, :log_name
+    
+    @@log_name = "perennial.log"
+    @@setup    = false
     
     class << self
       
+      def setup?
+        !!@@setup
+      end
+      
       def setup
-        # log_path = Marvin::Settings.root / "log/#{Marvin::Loader.type.to_s.dasherize}-#{Marvin::Settings.environment}.log"
-        # self.logger ||= new(log_path, Marvin::Settings.log_level, Marvin::Settings.verbose)
+        return if setup?
+        setup!
+      end
+      
+      def setup!
+        log_path = Settings.root / "log" / @@log_name.to_str
+        @@logger = new(log_path, Settings.log_level, Settings.verbose?)
+        @@setup = true
       end
       
       def method_missing(name, *args, &blk)
        self.setup # Ensure the logger is setup
-       self.logger.send(name, *args, &blk)
+       @@logger.send(name, *args, &blk)
+      end
+      
+      def respond_to?(symbol, include_private = false)
+        self.setup
+        super(symbol, include_private) || @@logger.respond_to?(symbol, include_private)
       end
     
     end
@@ -51,12 +69,13 @@ module Perennial
   
     LEVELS.each do |name, value|
       define_method(name) do |message|
-        write "#{PREFIXES[name]} #{message}", name if LEVELS[@level] <= value
+        write("#{PREFIXES[name]} #{message}", name) if LEVELS[@level] <= value
       end
     
       define_method(:"#{name}?") do
         LEVELS[@level] <= value
-      end    
+      end
+      
     end
   
     def log_exception(exception)

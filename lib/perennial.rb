@@ -9,6 +9,7 @@ require 'perennial/exceptions'
 module Perennial
   
   autoload :Dispatchable, 'perennial/dispatchable'
+  autoload :Hookable,     'perennial/hookable'
   autoload :Logger,       'perennial/logger'
   autoload :Loggable,     'perennial/loggable'
   autoload :Settings,     'perennial/settings'

@@ -23,6 +23,20 @@ class SettingsTest < Test::Unit::TestCase
       assert !Perennial::Settings.daemon?
     end
     
+    should "default the log level to :info" do
+      assert_equal :info, Perennial::Settings.log_level
+      Perennial::Settings.log_level = :debug
+      assert_equal :debug, Perennial::Settings.log_level
+    end
+    
+    should "default verbose to false" do
+      assert !Perennial::Settings.verbose?
+      Perennial::Settings.verbose = true
+      assert Perennial::Settings.verbose?
+      Perennial::Settings.verbose = false
+      assert !Perennial::Settings.verbose?
+    end
+    
   end
   
   context 'loading settings' do

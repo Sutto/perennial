@@ -66,11 +66,9 @@ module Perennial
       # stop the dispatch of events to the next set of the
       # handlers.
       rescue HaltHandlerProcessing => e
-        # TODO: Implement Logger and uncomment this
-        #Perennial::Logger.info "Halting processing chain"
-      # TODO: Implement Logger and uncomment this
-      #rescue Exception => e
-        #Perennial::Logger.log_exception(e)
+        Perennial::Logger.info "Halting processing chain"
+      rescue Exception => e
+        Perennial::Logger.log_exception(e)
       end
       
     end
