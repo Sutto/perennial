@@ -36,7 +36,7 @@ module Perennial
         klass = self.metaclass
         args.map { |a| a.to_sym }.each do |name|
           
-          klass.class_eval <<-RUBY
+          klass.class_eval(<<-RUBY, __FILE__, __LINE__ + 1)
             def #{name}(&blk)             # def before_run(&blk)
               append_hook(:#{name}, &blk) #   append_hook(:before_run, &blk)
             end                           # end
