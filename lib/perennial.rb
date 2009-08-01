@@ -9,7 +9,7 @@ require 'perennial/exceptions'
 module Perennial
   
   has_libary :dispatchable, :hookable, :loader, :logger,
-             :loggable, :manifest, :settings
+             :loggable, :manifest, :settings, :argument_parser
   
   def self.included(parent)
     parent.extend(Manifest::Mixin)
