@@ -66,9 +66,9 @@ module Perennial
       # stop the dispatch of events to the next set of the
       # handlers.
       rescue HaltHandlerProcessing => e
-        Perennial::Logger.info "Halting processing chain"
+        Logger.info "Halting processing chain"
       rescue Exception => e
-        Perennial::Logger.log_exception(e)
+        Logger.log_exception(e)
       end
       
     end
@@ -84,7 +84,7 @@ module Perennial
         if recursive && superclass.respond_to?(:handlers)
           handlers += superclass.handlers(recursive)
         end
-        handlers += Perennial::Dispatchable.handler_mapping[self]
+        handlers += Dispatchable.handler_mapping[self]
         return handlers
       end
       
@@ -92,7 +92,7 @@ module Perennial
       # this will only set this classes handlers, it will not override
       # those for others above / below it in the inheritance chain.
       def handlers=(new_value)
-        Perennial::Dispatchable.handler_mapping.delete self
+        Dispatchable.handler_mapping.delete self
         [*new_value].each { |h| register_handler h }
       end
       
@@ -100,7 +100,7 @@ module Perennial
       # Handlers are called in the order they are registered.
       def register_handler(handler)
         unless handler.blank? || !handler.respond_to?(:handle)
-          Perennial::Dispatchable.handler_mapping[self] << handler 
+          Dispatchable.handler_mapping[self] << handler 
         end
       end
       
