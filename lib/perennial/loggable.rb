@@ -1,4 +1,6 @@
 module Perennial
+  # A mixin that provides logger instance and
+  # class methods
   module Loggable
    
     def self.included(parent)
@@ -6,7 +8,7 @@ module Perennial
     end
     
     def logger
-      Perennial::Logger
+      Logger
     end
     
   end

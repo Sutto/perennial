@@ -13,6 +13,11 @@ module Perennial
   autoload :Loader,       'perennial/loader'
   autoload :Logger,       'perennial/logger'
   autoload :Loggable,     'perennial/loggable'
+  autoload :Manifest,     'perennial/manifest'
   autoload :Settings,     'perennial/settings'
+  
+  def self.included(parent)
+    parent.extend Manifest::Mixin
+  end
   
 end
