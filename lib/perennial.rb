@@ -8,16 +8,11 @@ require 'perennial/exceptions'
 
 module Perennial
   
-  autoload :Dispatchable, 'perennial/dispatchable'
-  autoload :Hookable,     'perennial/hookable'
-  autoload :Loader,       'perennial/loader'
-  autoload :Logger,       'perennial/logger'
-  autoload :Loggable,     'perennial/loggable'
-  autoload :Manifest,     'perennial/manifest'
-  autoload :Settings,     'perennial/settings'
+  has_libary :dispatchable, :hookable, :loader, :logger,
+             :loggable, :manifest, :settings
   
   def self.included(parent)
-    parent.extend Manifest::Mixin
+    parent.extend(Manifest::Mixin)
   end
   
 end

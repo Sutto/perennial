@@ -17,6 +17,8 @@ module Perennial
       def manifest(&blk)
         Manifest.namespace = self
         Manifest.app_name  = self.name.to_s.underscore
+        parent_folder = __DIR__(1)
+        attempt_require parent_folder / 'core_ext', parent_folder / 'exceptions'
         unless blk.nil?
           args = []
           args << Manifest if blk.arity != 0
