@@ -1,0 +1,13 @@
+$LOAD_PATH.unshift(File.dirname(__FILE__))
+require 'perennial'
+
+module <%= @application_module %>
+  include Perennial
+  
+  manifest do |m, l|
+    Loader.root = File.dirname(__FILE__)
+    # Initialize your controllers, e.g:
+    # l.register_controller :client, <%= @application_module %>::Client
+  end
+  
+end
