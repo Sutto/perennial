@@ -22,7 +22,7 @@ task :gemspec do
     s.homepage = 'http://sutto.net/'
     s.authors  = ["Darcy Laycock"]
     s.version  = Perennial::VERSION
-    s.summary  = "A simple event-driven application library for Ruby"
+    s.summary  = "A simple event-oriented application library for Ruby"
     s.files    = FileList["{bin,vendor,lib,test}/**/*"].to_a
     s.platform = Gem::Platform::RUBY
   end
