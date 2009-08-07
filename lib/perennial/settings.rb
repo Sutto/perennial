@@ -28,7 +28,7 @@ module Perennial
       end
       
       def library_root=(path)
-        @@library_root = path.tp_str
+        @@library_root = path.to_str
       end
       
       def library_root

@@ -37,6 +37,10 @@ module Perennial
       option_parser.add_defaults!
     end
     
+    def generator!
+      self.command_env = Perennial::Generator::CommandEnv
+    end
+    
     def add(command, description = nil, &blk)
       raise ArgumentError, "You must provide a block with an #{self.class.name}#add" if blk.nil?
       raise ArgumentError, "Your block must accept atleast one argument (a hash of options)" if blk.arity == 0
@@ -107,7 +111,7 @@ module Perennial
       provided_count = arguments.size
       if needed_count > 0 && needed_count != provided_count
         puts "You didn't provide the correct number of arguments (needed #{needed_count}, provided #{provided_count})"
-      elsif needed_count < 0 && (-needed_count) > provided_count
+      elsif needed_count < 0 && (-needed_count - 2) > provided_count
         puts "You didn't provide enough arguments - a minimum of #{-needed_count} are needed."
       else
         return true

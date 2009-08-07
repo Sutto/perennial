@@ -1,7 +1,7 @@
 $LOAD_PATH.unshift(File.dirname(__FILE__))
 require 'perennial'
 
-module <%= @application_module %>
+module Marvin
   include Perennial
   
   VERSION = "0.0.1"
@@ -9,7 +9,7 @@ module <%= @application_module %>
   manifest do |m, l|
     Settings.root = File.dirname(__FILE__)
     # Initialize your controllers, e.g:
-    # l.register_controller :client, <%= @application_module %>::Client
+    # l.register_controller :client, Marvin::Client
   end
   
 end

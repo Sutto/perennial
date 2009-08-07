@@ -6,9 +6,9 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Darcy Laycock"]
-  s.date = %q{2009-08-01}
+  s.date = %q{2009-08-07}
   s.email = %q{sutto@sutto.net}
-  s.files = ["vendor/fakefs", "vendor/fakefs/lib", "vendor/fakefs/lib/fakefs.rb", "vendor/fakefs/LICENSE", "vendor/fakefs/Rakefile", "vendor/fakefs/README.markdown", "vendor/fakefs/test", "vendor/fakefs/test/fakefs_test.rb", "vendor/fakefs/test/verify.rb", "lib/perennial", "lib/perennial/argument_parser.rb", "lib/perennial/core_ext", "lib/perennial/core_ext/attribute_accessors.rb", "lib/perennial/core_ext/blank.rb", "lib/perennial/core_ext/misc.rb", "lib/perennial/core_ext.rb", "lib/perennial/daemon.rb", "lib/perennial/dispatchable.rb", "lib/perennial/exceptions.rb", "lib/perennial/hookable.rb", "lib/perennial/loader.rb", "lib/perennial/loggable.rb", "lib/perennial/logger.rb", "lib/perennial/manifest.rb", "lib/perennial/option_parser.rb", "lib/perennial/settings.rb", "lib/perennial.rb", "test/dispatchable_test.rb", "test/hookable_test.rb", "test/loader_test.rb", "test/loggable_test.rb", "test/logger_test.rb", "test/settings_test.rb", "test/test_helper.rb"]
+  s.files = ["bin/perennial", "vendor/fakefs", "vendor/fakefs/lib", "vendor/fakefs/lib/fakefs.rb", "vendor/fakefs/LICENSE", "vendor/fakefs/Rakefile", "vendor/fakefs/README.markdown", "vendor/fakefs/test", "vendor/fakefs/test/fakefs_test.rb", "vendor/fakefs/test/verify.rb", "lib/perennial", "lib/perennial/application.rb", "lib/perennial/argument_parser.rb", "lib/perennial/core_ext", "lib/perennial/core_ext/attribute_accessors.rb", "lib/perennial/core_ext/blank.rb", "lib/perennial/core_ext/misc.rb", "lib/perennial/core_ext.rb", "lib/perennial/daemon.rb", "lib/perennial/dispatchable.rb", "lib/perennial/exceptions.rb", "lib/perennial/generator.rb", "lib/perennial/hookable.rb", "lib/perennial/loader.rb", "lib/perennial/loggable.rb", "lib/perennial/logger.rb", "lib/perennial/manifest.rb", "lib/perennial/option_parser.rb", "lib/perennial/settings.rb", "lib/perennial.rb", "test/dispatchable_test.rb", "test/hookable_test.rb", "test/loader_test.rb", "test/loggable_test.rb", "test/logger_test.rb", "test/settings_test.rb", "test/test_helper.rb"]
   s.homepage = %q{http://sutto.net/}
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.3.5}

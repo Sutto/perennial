@@ -1,6 +1,33 @@
 #!/usr/bin/env ruby
 require File.join(File.dirname(__FILE__), "..", "lib", "perennial")
 
-Perennial::Application.processing(ARGV) do
+Perennial::Application.processing(ARGV) do |a|
+  a.generator!
+  
+  a.option(:force, "force the creation of the application")
+  a.add("create", "[PATH] [APP-NAME]") do |path, *args|
+    # Get the app name, path etc.
+    opts     = args.extract_options!
+    app_name = args.empty? ? File.basename(path) : args.shift
+    path     = File.expand_path(path)
+    # Check if the folder exists
+    if File.exist?(path) && !opts[:force]
+      puts "The path you tried to use, #{path}, already exists. Please try another or pass --force"
+      exit
+    end
+    # Convert the name and class name.
+    app_path   = app_name.underscore
+    app_module = app_name.camelize
+    # Actually do the generation.
+    env = {:application_module => app_module, :application_path => app_path}
+    setup_generator path
+    folders 'tmp', 'config', 'lib', 'handlers', 'test'
+    template 'application.erb', "lib/#{app_path}.rb",    env
+    template 'boot.erb',        'config/boot.rb',           env
+    template 'setup.erb',       'config/setup.rb',          env
+    template 'rakefile.erb',    'Rakefile',                 env
+    template 'test_helper.erb', 'test/test_helper.rb',      env
+    template 'test.erb',        "test/#{app_path}_test.rb", env
+  end
   
 end

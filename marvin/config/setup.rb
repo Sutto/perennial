@@ -1,4 +1,4 @@
 # Use this on a per-application setup / initialization basis.
-<%= @application_module %>::Loader.before_run do
+Marvin::Loader.before_run do
   # Do stuff here...
 end
