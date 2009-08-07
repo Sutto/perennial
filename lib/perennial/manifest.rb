@@ -18,6 +18,7 @@ module Perennial
         Manifest.namespace = self
         Manifest.app_name  = self.name.to_s.underscore
         parent_folder = __DIR__(1)
+        Settings.library_root = parent_folder
         attempt_require parent_folder / 'core_ext', parent_folder / 'exceptions'
         unless blk.nil?
           args = []

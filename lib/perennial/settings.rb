@@ -27,6 +27,14 @@ module Perennial
         @@root ||= File.expand_path(File.dirname(__FILE__) / ".." / "..")
       end
       
+      def library_root=(path)
+        @@library_root = path.tp_str
+      end
+      
+      def library_root
+        @@library_root ||= File.expand_path(File.dirname(__FILE__) / ".." / "..")
+      end
+      
       def setup?
         @@setup ||= false
       end
