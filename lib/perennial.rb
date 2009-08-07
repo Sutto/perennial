@@ -12,7 +12,7 @@ module Perennial
   
   has_libary :dispatchable, :hookable, :loader, :logger,
              :loggable, :manifest, :settings, :argument_parser,
-             :option_parser
+             :option_parser, :application
   
   def self.included(parent)
     parent.extend(Manifest::Mixin)

@@ -1,7 +1,5 @@
-require 'singleton'
 module Perennial
   class OptionParser
-    include Singleton
     
     attr_reader :arguments
     
@@ -48,7 +46,7 @@ module Perennial
     end
     
     def self.method_missing(name, *args, &blk)
-      self.instance.send(name, *args, &blk)
+      self.default.send(name, *args, &blk)
     end
     
     # Over ride with your apps custom banner
@@ -78,17 +76,20 @@ module Perennial
       @defaults_added = true
     end
     
-    def setup
-      return if defined?(@setup) && @setup
-      setup!
-      @setup = true
+    def self.default
+      return @default if defined?(@default) && @default.present?
+      @default = setup_default!
     end
     
-    def self.setup!
-      opts = self.instance
+    def parse_argv(with = default)
+      with.parse
+      ARGV.replace with.arguments
+    end
+    
+    def self.setup_default!
+      opts = self.new
       opts.add_defaults!
-      opts.parse
-      ARGV.replace opts.arguments
+      return opts
     end
     
     protected

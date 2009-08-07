@@ -32,7 +32,7 @@ module Perennial
     
     def run!
       self.register_signals
-      OptionParser.setup
+      OptionParser.parse_argv
       self.class.invoke_hooks! :before_setup
       Daemon.daemonize! if Settings.daemon?
       Logger.log_name = "#{@@current_type.to_s}.log"
