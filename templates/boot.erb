@@ -1,2 +1,2 @@
-require <%= @application_name.to_s.inspect %>
-<%= @application_module %>::Settings.root = Pathname.new(__FILE__).join("..").expand_path
+require File.join(File.dirname(__FILE__), '..', 'lib', <%= @application_path.to_s.inspect %>)
+<%= @application_module %>::Settings.root = Pathname.new(__FILE__).dirname.join("..").expand_path
