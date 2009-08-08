@@ -36,13 +36,13 @@ module Perennial
     end
     
     def download(from, to)
-      puts "Downloading #{from}"
+      describe "Downloading #{from}"
       file to, open(from).read
     end
     
     def folders(*args)
       args.each do |f|
-        puts "Creating folder #{f}"
+        describe "Creating folder #{f}"
         FileUtils.mkdir_p(expand_destination_path(f))
       end
     end
@@ -50,14 +50,14 @@ module Perennial
     def file(name, contents)
       dest_folder = File.dirname(name)
       folders(dest_folder) unless File.directory?(expand_destination_path(dest_folder))
-      puts "Creating file #{name}"
+      describe "Creating file #{name}"
       File.open(expand_destination_path(name), "w+") do |f|
         f.write(contents)
       end
     end
     
     def template(source, destination, environment = {})
-      puts "Processing template #{source}"
+      describe "Processing template #{source}"
       raw_template = File.read(expand_template_path(source))
       processed_template = ERB.new(raw_template).result(binding_for(environment))
       file destination, processed_template
@@ -79,6 +79,10 @@ module Perennial
     
     def expand_destination_path(p)
       File.expand_path(p, @destination_path)
+    end
+    
+    def describe(action)
+      puts "- #{action}"
     end
     
   end
