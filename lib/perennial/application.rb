@@ -77,7 +77,7 @@ module Perennial
       @commands.keys.sort.each do |command|
         next unless @descriptions.has_key?(command)
         formatted_command = "#{@banners[command]} [OPTIONS]".ljust(max_width + 10)
-        command = " %s\n    %s\n\n" % [formatted_command, @descriptions[command]]
+        command = "%s - %s" % [formatted_command, @descriptions[command]]
         puts command
       end
     end
