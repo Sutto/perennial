@@ -20,7 +20,7 @@ module Perennial
       end
       
       def root=(path)
-        @@root = path.to_str
+        @@root = File.expand_path(path.to_str)
       end
       
       def root
@@ -28,7 +28,7 @@ module Perennial
       end
       
       def library_root=(path)
-        @@library_root = path.to_str
+        @@library_root = File.expand_path(path.to_str)
       end
       
       def library_root
