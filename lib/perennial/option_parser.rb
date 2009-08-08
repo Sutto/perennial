@@ -45,10 +45,6 @@ module Perennial
       return nil
     end
     
-    def self.method_missing(name, *args, &blk)
-      self.default.send(name, *args, &blk)
-    end
-    
     # Over ride with your apps custom banner
     def self.print_banner
     end
@@ -81,7 +77,7 @@ module Perennial
       @default = setup_default!
     end
     
-    def parse_argv(with = default)
+    def self.parse_argv(with = default)
       with.parse
       ARGV.replace with.arguments
     end

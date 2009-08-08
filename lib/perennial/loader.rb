@@ -6,7 +6,7 @@ module Perennial
     include Perennial::Hookable
     
     cattr_accessor :controllers, :current_type, :default_type
-    @@controllers = []
+    @@controllers = {}
     
     define_hook :before_run, :after_stop
     
@@ -32,7 +32,6 @@ module Perennial
     
     def run!
       self.register_signals
-      OptionParser.parse_argv
       self.class.invoke_hooks! :before_setup
       Daemon.daemonize! if Settings.daemon?
       Logger.log_name = "#{@@current_type.to_s}.log"
@@ -64,7 +63,7 @@ module Perennial
       begin
         config_dir = Settings.root / "config"
         setup_file = config_dir / "setup.rb"
-        require(setup_file) if File.directory?(handler_directory) && File.exist?(setup_file)
+        require(setup_file) if File.directory?(config_dir) && File.exist?(setup_file)
       rescue LoadError
       end
       # Load any existing handlers assuming we can find the folder
