@@ -76,7 +76,8 @@ module Perennial
       max_width = @banners.values.map { |b| b.length }.max
       @commands.keys.sort.each do |command|
         next unless @descriptions.has_key?(command)
-        command = "%s - %s" % [@banners[command].ljust(max_width), @descriptions[command]]
+        formatted_command = "#{@banners[command]} [OPTIONS]".ljust(max_width + 10)
+        command = " %s\n    %s\n\n" % [formatted_command, @descriptions[command]]
         puts command
       end
     end
