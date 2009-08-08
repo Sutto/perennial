@@ -24,8 +24,8 @@ task :gemspec do
     s.version     = Perennial::VERSION
     s.summary     = "A simple (generally event-oriented) application library for Ruby"
     s.description = "Perennial is a platform for building different applications in Ruby. It uses a controller-based approach with mixins to provide different functionality."
-    s.files       = FileList["{bin,vendor,lib,test}/**/*"].to_a
-    s.executables = FileList["bin/*"].to_a
+    s.files       = FileList["{bin,vendor,lib,test,templates}/**/*"].to_a
+    s.executables = FileList["bin/*"].to_a.map { |f| File.basename(f) }
     s.platform    = Gem::Platform::RUBY
   end
   File.open("perennial.gemspec", "w+") { |f| f.puts spec.to_ruby }
