@@ -90,6 +90,7 @@ module Perennial
       puts "Usage: #{$0} #{@banners[command]} [options]"
       puts "Options:"
       puts @option_parsers[command].summary
+      exit
     end
     
     def self.processing(args, &blk)
