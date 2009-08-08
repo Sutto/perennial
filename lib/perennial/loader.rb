@@ -13,7 +13,7 @@ module Perennial
     def self.register_controller(name, controller)
       return if name.blank? || controller.blank?
       name = name.to_sym
-      @@controller[name] = controller
+      @@controllers[name] = controller
       metaclass.class_eval(<<-RUBY, __FILE__, __LINE__ + 1)
         def #{name}?                 # def client?
           @@current_type == :#{name} #   @@current_type == :client
