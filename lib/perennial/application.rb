@@ -39,8 +39,32 @@ module Perennial
     end
     
     def generator!
-      self.command_env = Perennial::Generator::CommandEnv
+      if defined?(Generator)
+        self.command_env = Generator::CommandEnv
+      end
     end
+    
+    def controller!(controller, description)
+      return unless defined?(Loader)
+      add_default_options!
+      option :kill, "Kill any runninng instances"
+      controller_name = controller.to_s.underscore
+      controller = controller.to_sym
+      command_name = controller_name.gsub("_", "-")
+      add("#{command_name} [PATH]", description) do |*args|
+        options = args.extract_options!
+        path = File.expand_path(args[0] || ".")
+        Settings.root = path
+        if options[:kill]
+          puts "Attempting to kill processess..."
+          Daemon.kill_all(controller)
+        else
+          Loader.run!(controller)
+        end
+      end
+    end
+    
+    
     
     def add(raw_command, description = nil, &blk)
       raise ArgumentError, "You must provide a block with an #{self.class.name}#add" if blk.nil?
