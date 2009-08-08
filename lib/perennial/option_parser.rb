@@ -30,7 +30,7 @@ module Perennial
         max_length = [text.size, max_length].max
         output << [text, @descriptions[name]]
       end
-      output.map { |text, description| "#{text}: ".ljust(max_length + 2) + description }.join("\n")
+      output.map { |text, description| "#{text.ljust(max_length)} - #{description}" }.join("\n")
     end
     
     def parse(arguments = ARGV)

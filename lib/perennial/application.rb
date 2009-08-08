@@ -27,6 +27,7 @@ module Perennial
       @option_parser   = nil
       @command_options = {}
       @command_env     = (opts[:command_env] || CommandEnv)
+      @banners         = {}
     end
     
     def option(name, description = nil)
@@ -41,15 +42,17 @@ module Perennial
       self.command_env = Perennial::Generator::CommandEnv
     end
     
-    def add(command, description = nil, &blk)
+    def add(raw_command, description = nil, &blk)
       raise ArgumentError, "You must provide a block with an #{self.class.name}#add" if blk.nil?
       raise ArgumentError, "Your block must accept atleast one argument (a hash of options)" if blk.arity == 0
+      command, _ = raw_command.split(" ", 2)
+      @banners[command] = raw_command
       @commands[command]     = blk
       @descriptions[command] = description if description.present?
-      unless @option_parser.nil?
-        @option_parsers[command] = @option_parser
-        @option_parser = nil
-      end
+      # Add the default help message for a command
+      option_parser.add(:help, "Show this message") { help_for(command) }
+      @option_parsers[command] = option_parser
+      @option_parser = nil
     end
     
     def execute(arguments)
@@ -65,7 +68,28 @@ module Perennial
     end
     
     def usage
-      puts banner if banner.present?
+      if banner.present?
+        puts banner
+        puts ""
+      end
+      puts "Usage:"
+      max_width = @banners.values.map { |b| b.length }.max
+      @commands.keys.sort.each do |command|
+        next unless @descriptions.has_key?(command)
+        command = "%s - %s" % [@banners[command].ljust(max_width), @descriptions[command]]
+        puts command
+      end
+    end
+    
+    def help_for(command)
+     if banner.present?
+        puts banner
+        puts ""
+      end
+      puts @descriptions[command]
+      puts "Usage: #{$0} #{@banners[command]} [options]"
+      puts "Options:"
+      puts @option_parsers[command].summary
     end
     
     def self.processing(args, &blk)
@@ -81,11 +105,11 @@ module Perennial
     protected
     
     def execute_command(command, arguments)
-      command = @commands[command]
+      command_proc = @commands[command]
       args, opts = extract_arguments(command, arguments)
-      if valid_arity?(command, arguments)
+      if valid_arity?(command_proc, args)
         args << opts
-        @command_env.execute(command, args)
+        @command_env.execute(command_proc, args)
       else
         usage
       end
@@ -94,7 +118,7 @@ module Perennial
     def extract_arguments(command, arguments)
       option_parser = @option_parsers[command]
       if option_parser.present?
-        option_parser.parse(ARGV)
+        option_parser.parse(arguments)
         return option_parser.arguments, @command_options
       else
         return arguments, {}
