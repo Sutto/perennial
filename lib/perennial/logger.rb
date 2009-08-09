@@ -57,7 +57,7 @@ module Perennial
   
     attr_accessor :level, :file, :verbose
   
-    def initialize(path, level = :info, verbose = false)
+    def initialize(path, level = :info, verbose = Settings.verbose?)
       @level   = level.to_sym
       @verbose = verbose
       @file    = File.open(path, "a+")
@@ -86,7 +86,7 @@ module Perennial
     end
     
     def verbose?
-      !!@vebose
+      !!@verbose
     end
   
     private

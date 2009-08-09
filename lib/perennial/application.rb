@@ -55,11 +55,11 @@ module Perennial
         options = args.extract_options!
         path = File.expand_path(args[0] || ".")
         Settings.root = path
-        if options[:kill]
+        if options.delete(:kill)
           puts "Attempting to kill processess..."
           Daemon.kill_all(controller)
         else
-          Loader.run!(controller)
+          Loader.run!(controller, options)
         end
       end
     end

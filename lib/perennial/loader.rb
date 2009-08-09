@@ -21,16 +21,16 @@ module Perennial
       RUBY
     end
     
-    def self.run!(type = self.default_type)
+    def self.run!(type = self.default_type, options = {})
       @@current_type = type.to_sym
-      self.instance.run!
+      self.instance.run!(options)
     end
     
     def self.stop!(force = false)
       self.instance.stop!(force)
     end
     
-    def run!
+    def run!(options = {})
       self.register_signals
       self.class.invoke_hooks! :before_setup
       Daemon.daemonize! if Settings.daemon?
@@ -39,7 +39,7 @@ module Perennial
       Settings.setup
       self.load_custom_code
       self.class.invoke_hooks!        :before_run
-      self.attempt_controller_action! :run
+      self.attempt_controller_action! :run, options
     end
     
     def stop!(force = false)
@@ -85,10 +85,17 @@ module Perennial
       end
     end
     
-    def attempt_controller_action!(action)
+    def attempt_controller_action!(action, *args)
       action = action.to_sym
       unless current_controller.blank? || !current_controller.respond_to?(action)
-        current_controller.send(action)
+        method = current_controller.method(action)
+        if method.arity == 0
+          method.call
+        elsif method.arity < 0 || method.arity == args.size
+          method.call(*args)
+        else
+          raise ArgumentError, "controller action #{action} requires #{method.arity} arguments, provided #{args.size}"
+        end
       end
     end
     
