@@ -1,3 +1,5 @@
+require 'fileutils'
+
 module Perennial
   # = Perennial::Daemon provides a relatively simple
   # interface to creating unix daemons from a given process.
@@ -112,6 +114,7 @@ module Perennial
         f = pid_file_for(type)
         pids = pids_from(f)
         pids << Process.pid unless pids.include?(Process.pid)
+        FileUtils.mkdir_p(File.dirname(f))
         File.open(f, "w+") { |f| f.puts pids.join("\n") }
       end
       

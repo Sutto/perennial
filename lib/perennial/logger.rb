@@ -1,3 +1,5 @@
+require 'fileutils'
+
 module Perennial
   class Logger
     
@@ -60,6 +62,7 @@ module Perennial
     def initialize(path, level = :info, verbose = Settings.verbose?)
       @level   = level.to_sym
       @verbose = verbose
+      FileUtils.mkdir_p(File.dirname(path))
       @file    = File.open(path, "a+")
     end
   
