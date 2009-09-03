@@ -1,6 +1,7 @@
 require 'open-uri'
 require 'fileutils'
 require 'erb'
+require 'readline'
 
 module Perennial
   class Generator

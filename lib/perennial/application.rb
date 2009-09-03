@@ -15,6 +15,16 @@ module Perennial
         klass.new.apply(*arguments)
       end
       
+      def yes?(question)
+        result = Readline.readline("#{question.to_s.strip} ")
+        result.downcase[0] == ?y
+      end
+      
+      def ask(question, default)
+        result = Readline.readline("#{question.to_s.strip} ")
+        result.strip.empty? ? default : result
+      end
+      
     end
     
     attr_accessor :options, :banner, :command_env
