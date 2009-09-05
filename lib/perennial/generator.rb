@@ -36,9 +36,40 @@ module Perennial
       puts "Starting generator for #{destination}"
     end
     
-    def download(from, to)
+    # Helpers for testing file state
+    
+    def fu
+      FileUtils
+    end
+    
+    def chmod(permissions, path)
+      describe "Changing permissions for #{path} to #{permissions}"
+      FileUtils.chmod(permissions, expand_destination_path(path))
+    end
+    
+    def file?(path)
+      describe "Checking if #{path} is a file"
+      File.file?(expand_destination_path(path))
+    end
+    
+    def executable?(path)
+      describe "Checking if #{path} is an executable"
+      File.executable?(expand_destination_path(path))
+    end
+    
+    def directory?(path)
+      describe "Checking if #{path} is a directory"
+      File.directory?(expand_destination_path(path))
+    end
+    
+    def exists?(path)
+      describe "Checking if #{path} exists"
+      File.exits?(expand_destination_path(path))
+    end
+    
+    def download(from, to, append = false)
       describe "Downloading #{from}"
-      file to, open(from).read
+      file to, open(from).read, append
     end
     
     def folders(*args)
@@ -48,20 +79,20 @@ module Perennial
       end
     end
     
-    def file(name, contents)
+    def file(name, contents, append = false)
       dest_folder = File.dirname(name)
       folders(dest_folder) unless File.directory?(expand_destination_path(dest_folder))
       describe "Creating file #{name}"
-      File.open(expand_destination_path(name), "w+") do |f|
+      File.open(expand_destination_path(name), "#{append ? "a" : "w"}+") do |f|
         f.write(contents)
       end
     end
     
-    def template(source, destination, environment = {})
+    def template(source, destination, environment = {}, append = false)
       describe "Processing template #{source}"
       raw_template = File.read(expand_template_path(source))
       processed_template = ERB.new(raw_template).result(binding_for(environment))
-      file destination, processed_template
+      file destination, processed_template, append
     end
     
     protected
