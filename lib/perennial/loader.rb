@@ -53,7 +53,10 @@ module Perennial
     end
     
     def current_controller
-      @current_controller ||= @@controllers[@@current_type.to_sym]
+      @current_controller ||= begin
+        c = @@controllers[@@current_type.to_sym]
+        c.is_a?(String) ? eval(c) : c
+      end
     end
     
     protected
