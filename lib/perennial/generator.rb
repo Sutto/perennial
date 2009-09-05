@@ -33,6 +33,7 @@ module Perennial
     def initialize(destination, opts = {})
       @destination_path = destination
       @template_path    = opts[:template_path] || File.join(Settings.library_root, "templates")
+      @silent = !!opts[:silent]
       describe "Initializing generator in #{destination}"
     end
     
@@ -116,7 +117,7 @@ module Perennial
     end
     
     def describe(action)
-      puts "[generator] #{action}"
+      puts "[generator] #{action}" unless @silent
     end
     
   end
