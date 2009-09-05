@@ -39,13 +39,22 @@ module Perennial
         @@setup ||= false
       end
       
+      def default_settings_path
+        @@default_settings_path ||= (root / "config" / "settings.yml")
+      end
+      
+      def default_settings_path=(value)
+        @@default_settings_path = value
+        setup! unless setup?
+      end
+      
       def setup(options = {})
         self.setup!(options) unless setup?
       end
       
       def setup!(options = {})
         @@configuration = {}
-        settings_file = root / "config" / "settings.yml"
+        settings_file = self.default_settings_path
         if File.exist?(settings_file)
           loaded_yaml = YAML.load(File.read(settings_file))
           @@configuration.merge! loaded_yaml["default"]

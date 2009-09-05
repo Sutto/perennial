@@ -19,9 +19,18 @@ module Perennial
         setup!
       end
       
+      def default_logger_path=(value)
+        @@default_logger_path = value
+        # Rereun setup if setup is already done.
+        setup! if setup?
+      end
+      
+      def default_logger_path
+        @@default_logger_path ||= (Settings.root / "log" / @@log_name.to_str)
+      end
+      
       def setup!
-        log_path = Settings.root / "log" / @@log_name.to_str
-        @@logger = new(log_path, Settings.log_level, Settings.verbose?)
+        @@logger = new(self.default_logger_path, Settings.log_level, Settings.verbose?)
         @@setup = true
       end
       
