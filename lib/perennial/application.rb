@@ -16,13 +16,13 @@ module Perennial
       end
       
       def yes?(question)
-        result = Readline.readline("#{question.to_s.strip} ")
+        result = Readline.readline("#{question.to_s.strip} (y/n) ")
         result.downcase[0] == ?y
       end
       
       def ask(question, default)
-        result = Readline.readline("#{question.to_s.strip} ")
-        result.strip.empty? ? default : result
+        result = Readline.readline("#{question.to_s.strip} (default: #{default}) ")
+        result.blank? ? default : result
       end
       
       def die!(message)
