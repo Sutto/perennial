@@ -25,6 +25,11 @@ module Perennial
         result.strip.empty? ? default : result
       end
       
+      def die!(message)
+        $stderr.puts message
+        exit! 1
+      end
+      
     end
     
     attr_accessor :options, :banner, :command_env
