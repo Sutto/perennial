@@ -45,7 +45,7 @@ module Perennial
       
       def default_settings_path=(value)
         @@default_settings_path = value
-        setup! unless setup?
+        setup! if setup?
       end
       
       def setup(options = {})
@@ -57,7 +57,7 @@ module Perennial
         settings_file = self.default_settings_path
         if File.exist?(settings_file)
           loaded_yaml = YAML.load(File.read(settings_file))
-          @@configuration.merge! loaded_yaml["default"]
+          @@configuration.merge!(loaded_yaml["default"] || {})
         end
         @@configuration.merge! options
         @@configuration.symbolize_keys!
