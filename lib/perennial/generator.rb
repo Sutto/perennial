@@ -33,7 +33,7 @@ module Perennial
     def initialize(destination, opts = {})
       @destination_path = destination
       @template_path    = opts[:template_path] || File.join(Settings.library_root, "templates")
-      puts "Starting generator for #{destination}"
+      describe "Initializing generator in #{destination}"
     end
     
     # Helpers for testing file state
@@ -61,6 +61,8 @@ module Perennial
       describe "Checking if #{path} is a directory"
       File.directory?(expand_destination_path(path))
     end
+    
+    alias folder? directory?
     
     def exists?(path)
       describe "Checking if #{path} exists"
@@ -114,7 +116,7 @@ module Perennial
     end
     
     def describe(action)
-      puts "- #{action}"
+      puts "[generator] #{action}"
     end
     
   end
