@@ -118,7 +118,6 @@ module Perennial
     def usage(skip_banner = false)
       attempt_showing_banner unless skip_banner
       puts "Usage:"
-      puts ""
       max_width = @banners.values.map { |b| b.length }.max
       @commands.keys.sort.each do |command|
         next unless @descriptions.has_key?(command)
@@ -135,9 +134,8 @@ module Perennial
       puts @descriptions[command]
       puts ""
       puts "Usage: #{$0} #{@banners[command]} [options]"
-      puts ""
       puts "Options:"
-      puts @option_parsers[command].summary
+      puts pad_left(@option_parsers[command].summary)
       exit
     end
     
@@ -202,8 +200,15 @@ module Perennial
     
     def show_error(text)
       attempt_showing_banner
-      puts text
+      text = "Error: #{text}".strip
+      puts "--#{"-" * text.length}"
+      puts " #{text} "
+      puts "--#{"-" * text.length}"
       puts ""
+    end
+    
+    def pad_left(text, spacing = 2)
+      text.split("\n").map { |l| "#{" " * spacing}#{l}" }.join("\n")
     end
     
   end
