@@ -25,6 +25,14 @@ module Perennial
         result.blank? ? default : result
       end
       
+      def ask_password(question)
+        system "stty -echo" 
+        line = Readline.readline("#{question.to_s.strip} ").strip
+        system "stty echo"
+        print "\n"
+        return line
+      end
+      
       def die!(message)
         $stderr.puts message
         exit! 1
@@ -59,19 +67,20 @@ module Perennial
       end
     end
     
-    def controller!(controller, description)
+    def controller!(controller, description, opts = {})
       return unless defined?(Loader)
       add_default_options!
       option :kill, "Kill any runninng instances"
       controller_name = controller.to_s.underscore
       controller = controller.to_sym
       command_name = controller_name.gsub("_", "-")
-      add("#{command_name} [PATH]", description) do |*args|
+      add("#{command_name} #{"[PATH]" if !opts[:skip_path]}".strip, description) do |*args|
         options = args.extract_options!
         path = File.expand_path(args[0] || ".")
         Settings.root = path
         if options.delete(:kill)
-          puts "Attempting to kill processess..."
+          attempt_showing_banner
+          puts "Attempting to kill processess for #{command_name}"
           Daemon.kill_all(controller)
         else
           Loader.run!(controller, options)
@@ -101,16 +110,14 @@ module Perennial
       if @commands.has_key?(command)
         execute_command(command, arguments)
       else
+        attempt_showing_banner
         puts "Unknown command '#{command}', please try again."
-        return usage
+        usage(true)
       end
     end
     
-    def usage
-      if banner.present?
-        puts banner
-        puts ""
-      end
+    def usage(skip_banner = false)
+      attempt_showing_banner unless skip_banner
       puts "Usage:"
       max_width = @banners.values.map { |b| b.length }.max
       @commands.keys.sort.each do |command|
@@ -121,11 +128,8 @@ module Perennial
       end
     end
     
-    def help_for(command)
-     if banner.present?
-        puts banner
-        puts ""
-      end
+    def help_for(command, skip_banner = false)
+      attempt_showing_banner unless skip_banner
       puts @descriptions[command]
       puts "Usage: #{$0} #{@banners[command]} [options]"
       puts "Options:"
@@ -143,6 +147,13 @@ module Perennial
       application.execute args
     end
     
+    def attempt_showing_banner
+      if banner.present?
+        puts banner
+        puts ""
+      end
+    end
+    
     protected
     
     def execute_command(command, arguments)
@@ -152,7 +163,7 @@ module Perennial
         args << opts
         @command_env.execute(command_proc, args)
       else
-        usage
+        help_for(command, true)
       end
     end
     
@@ -175,8 +186,10 @@ module Perennial
       needed_count   = blk.arity - 1
       provided_count = arguments.size
       if needed_count > 0 && needed_count != provided_count
+        attempt_showing_banner
         puts "You didn't provide the correct number of arguments (needed #{needed_count}, provided #{provided_count})"
       elsif needed_count < 0 && (-needed_count - 2) > provided_count
+        attempt_showing_banner
         puts "You didn't provide enough arguments - a minimum of #{-needed_count} are needed."
       else
         return true
