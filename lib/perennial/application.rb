@@ -110,8 +110,7 @@ module Perennial
       if @commands.has_key?(command)
         execute_command(command, arguments)
       else
-        attempt_showing_banner
-        puts "Unknown command '#{command}', please try again."
+        show_error "Unknown command '#{command}', please try again."
         usage(true)
       end
     end
@@ -119,19 +118,24 @@ module Perennial
     def usage(skip_banner = false)
       attempt_showing_banner unless skip_banner
       puts "Usage:"
+      puts ""
       max_width = @banners.values.map { |b| b.length }.max
       @commands.keys.sort.each do |command|
         next unless @descriptions.has_key?(command)
         formatted_command = "#{@banners[command]} [OPTIONS]".ljust(max_width + 10)
-        command = "%s - %s" % [formatted_command, @descriptions[command]]
+        command = "  %s - %s" % [formatted_command, @descriptions[command]]
         puts command
       end
+      puts ""
+      puts "Please note: you can pass -h / --help to any command for more specific help"
     end
     
     def help_for(command, skip_banner = false)
       attempt_showing_banner unless skip_banner
       puts @descriptions[command]
+      puts ""
       puts "Usage: #{$0} #{@banners[command]} [options]"
+      puts ""
       puts "Options:"
       puts @option_parsers[command].summary
       exit
@@ -187,14 +191,19 @@ module Perennial
       provided_count = arguments.size
       if needed_count > 0 && needed_count != provided_count
         attempt_showing_banner
-        puts "You didn't provide the correct number of arguments (needed #{needed_count}, provided #{provided_count})"
+        show_error "You didn't provide the correct number of arguments (needed #{needed_count}, provided #{provided_count})"
       elsif needed_count < 0 && (-needed_count - 2) > provided_count
-        attempt_showing_banner
-        puts "You didn't provide enough arguments - a minimum of #{-needed_count} are needed."
+        show_error "You didn't provide enough arguments - a minimum of #{-needed_count} are needed."
       else
         return true
       end
       
+    end
+    
+    def show_error(text)
+      attempt_showing_banner
+      puts text
+      puts ""
     end
     
   end
