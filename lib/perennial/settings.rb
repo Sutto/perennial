@@ -48,6 +48,14 @@ module Perennial
         setup! if setup?
       end
       
+      def settings_lookup_path
+        @@settings_lookup_path ||= ["default"]
+      end
+      
+      def settings_lookup_path=(value)
+        @@settings_lookup_path = value
+      end
+      
       def setup(options = {})
         self.setup!(options) unless setup?
       end
@@ -57,7 +65,7 @@ module Perennial
         settings_file = self.default_settings_path
         if File.exist?(settings_file)
           loaded_yaml = YAML.load(File.read(settings_file))
-          @@configuration.merge!(loaded_yaml["default"] || {})
+          @@configuration.merge!(lookup_settings_from(loaded_yaml))
         end
         @@configuration.merge! options
         @@configuration.symbolize_keys!
@@ -66,6 +74,17 @@ module Perennial
         extend  mod
         include mod
         @@setup = true
+      end
+      
+      def update!(attributes = {})
+        return if attributes.blank?
+        settings_file = self.default_settings_path
+        settings = File.exist?(settings_file) ? YAML.load(File.read(settings_file)) : {}
+        namespaced_settings = lookup_settings_from(settings)
+        namespaced_settings.merge! attributes.stringify_keys
+        File.open(settings_file, "w+") { |f| f.write(settings.to_yaml) }
+        setup!
+        return true
       end
       
       def [](key)
@@ -95,6 +114,12 @@ module Perennial
               Settings.configuration[k] = val
             end
           end
+        end
+      end
+      
+      def lookup_settings_from(settings_hash)
+        settings_lookup_path.inject(settings_hash) do |h, k|
+          h[k.to_s] ||= {} 
         end
       end
       
