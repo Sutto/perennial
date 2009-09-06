@@ -48,12 +48,12 @@ module Perennial
         setup! if setup?
       end
       
-      def settings_lookup_path
-        @@settings_lookup_path ||= ["default"]
+      def lookup_key_path
+        @@lookup_key_path ||= ["default"]
       end
       
-      def settings_lookup_path=(value)
-        @@settings_lookup_path = value
+      def lookup_key_path=(value)
+        @@lookup_key_path = value
       end
       
       def setup(options = {})
@@ -118,7 +118,7 @@ module Perennial
       end
       
       def lookup_settings_from(settings_hash)
-        settings_lookup_path.inject(settings_hash) do |h, k|
+        lookup_key_path.inject(settings_hash) do |h, k|
           h[k.to_s] ||= {} 
         end
       end

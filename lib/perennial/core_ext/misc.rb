@@ -87,7 +87,7 @@ class Hash
   
   def stringify_keys!
     hash = {}
-    self.each_pair { |k, v| h[k.to_s] = v }
+    self.each_pair { |k, v| hash[k.to_s] = v }
     replace hash
   end
   
