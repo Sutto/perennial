@@ -98,9 +98,9 @@ class Class
     ns = Perennial::Manifest.namespace
     return if ns.blank?
     mixins.each do |mixin|
-      real_name = mixin.to_s.camelize
-      if ns.const_defined?(real_name)
-        include ns.const_get(real_name)
+      begin
+        include ns.const_get(mixin.to_s.camelize)
+      rescue NameError
       end
     end
   end

@@ -62,9 +62,9 @@ module Perennial
       # the double fork approach. Also, changes process file
       # mask to 000 and reopens STDIN / OUT to /dev/null
       def daemonize!
-        exit if fork
+        fork_off_and_die
         Process.setsid
-        exit if fork
+        fork_off_and_die
         self.write_pid
         File.umask    0000
         STDIN.reopen  "/dev/null"
@@ -116,6 +116,13 @@ module Perennial
         pids << Process.pid unless pids.include?(Process.pid)
         FileUtils.mkdir_p(File.dirname(f))
         File.open(f, "w+") { |f| f.puts pids.join("\n") }
+      end
+      
+      def fork_off_and_die
+        if pid = fork
+          Process.detach(pid)
+          exit
+        end
       end
       
     end
