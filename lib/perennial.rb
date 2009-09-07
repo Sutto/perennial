@@ -9,12 +9,12 @@ require 'perennial/exceptions'
 
 module Perennial
   
-  VERSION = "0.2.3.2"
+  VERSION = "0.2.3.3"
   
-  has_libary :dispatchable, :hookable, :loader, :logger,
-             :loggable, :manifest, :settings, :argument_parser,
-             :option_parser, :application, :generator, :daemon,
-             :delegateable
+  has_library :dispatchable, :hookable, :loader, :logger,
+              :loggable, :manifest, :settings, :argument_parser,
+              :option_parser, :application, :generator, :daemon,
+              :delegateable
   
   def self.included(parent)
     parent.extend(Manifest::Mixin)

@@ -50,7 +50,7 @@ end
 
 class Module
   
-  def has_libary(*items)
+  def has_library(*items)
     namespace = self.to_s.underscore
     items.each do |item|
       require File.join(namespace, item.to_s.underscore)

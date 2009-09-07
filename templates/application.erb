@@ -1,4 +1,5 @@
-$LOAD_PATH.unshift(File.dirname(__FILE__))
+lib_path = File.dirname(__FILE__)
+$LOAD_PATH.unshift(lib_path) unless $LOAD_PATH.include?(lib_path)
 require 'perennial'
 
 module <%= @application_module %>
@@ -7,7 +8,7 @@ module <%= @application_module %>
   VERSION = "0.0.1"
   
   manifest do |m, l|
-    Settings.root = File.dirname(__FILE__)
+    Settings.root = __FILE__.to_pathname.dirname.dirname
     # Initialize your controllers, e.g:
     # l.register_controller :client, <%= @application_module %>::Client
   end
