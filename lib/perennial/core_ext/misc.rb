@@ -68,11 +68,39 @@ class Module
     end 
   end
   
+  def add_extension(name, &blk)
+    item = name.to_s.camelize.to_sym
+    return unless const_defined?(item)
+    target = const_get(item)
+    if target.is_a?(Class)
+      target.class_eval(&blk)
+    elsif target.is_a?(Module)
+      target.module_eval(&blk)
+    else
+      raise "Unable to extend #{target.inspect}"
+    end
+  end
+  
   def attempt_require(*files)
     files.each do |file|
       begin
         require file
       rescue LoadError
+      end
+    end
+  end
+  
+end
+
+class Class
+  
+  def is(*mixins)
+    ns = Perennial::Manifest.namespace
+    return if ns.blank?
+    mixins.each do |mixin|
+      real_name = mixin.to_s.camelize
+      if ns.const_defined?(real_name)
+        include ns.const_get(real_name)
       end
     end
   end
