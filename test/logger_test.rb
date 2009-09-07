@@ -30,6 +30,8 @@ class LoggerTest < Test::Unit::TestCase
         assert Perennial::Logger.respond_to?(:log_exception)
         assert Perennial::Logger.logger.respond_to?(:log_exception)
       end
+      
+      should 'let you configure a dir that logs are loaded from'
     
     end
   

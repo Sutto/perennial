@@ -5,9 +5,11 @@ module Perennial
     
     cattr_accessor :configuration, :log_level, :verbose, :daemon
                    
-    @@verbose   = false
-    @@log_level = :info
-    @@daemon    = false
+    @@verbose               = false
+    @@log_level             = :info
+    @@daemon                = false
+    @@default_settings_path = nil
+    @@lookup_key_path       = ["default"]
     
     class << self
       
@@ -40,7 +42,7 @@ module Perennial
       end
       
       def default_settings_path
-        @@default_settings_path ||= (root / "config" / "settings.yml")
+        @@default_settings_path || (root / "config" / "settings.yml")
       end
       
       def default_settings_path=(value)
@@ -49,7 +51,7 @@ module Perennial
       end
       
       def lookup_key_path
-        @@lookup_key_path ||= ["default"]
+        @@lookup_key_path ||= []
       end
       
       def lookup_key_path=(value)

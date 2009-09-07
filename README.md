@@ -17,3 +17,7 @@ Since each event processed by a handler is incredibly simple (a symbol for a nam
 and a hash of associated options / details), and there are typically few requirements
 (e.g. a handler only typically needs to define the 'handle' method) it
 makes it relatively easy to build your application how you like.
+
+In other words, Perennial is mainly a bunch of useful mixings (Dispatchable,
+Hookable, Delegateable) which fit in with some evented application design 
+along with the framework for building applications around this design.

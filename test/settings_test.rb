@@ -94,6 +94,10 @@ class SettingsTest < Test::Unit::TestCase
       end
     end
     
+    should 'let you configure the lookup key path'
+    
+    should 'let you configure the file settings are loaded from'
+    
   end
   
 end

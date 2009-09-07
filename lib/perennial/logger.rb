@@ -5,8 +5,9 @@ module Perennial
     
     cattr_accessor :logger, :log_name
     
-    @@log_name = "perennial.log"
-    @@setup    = false
+    @@log_name            = "perennial.log"
+    @@setup               = false
+    @@default_logger_path = nil
     
     class << self
       
@@ -26,7 +27,7 @@ module Perennial
       end
       
       def default_logger_path
-        @@default_logger_path ||= (Settings.root / "log" / @@log_name.to_str)
+        @@default_logger_path || (Settings.root / "log" / @@log_name.to_str)
       end
       
       def setup!
