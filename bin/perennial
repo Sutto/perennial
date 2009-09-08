@@ -15,8 +15,7 @@ Perennial::Application.processing(ARGV) do |a|
     path     = File.expand_path(path)
     # Check if the folder exists
     if File.exist?(path) && !opts[:force]
-      puts "The path you tried to use, #{path}, already exists. Please try another or pass --force"
-      exit
+      die! "The path you tried to use, #{path}, already exists. Please try another or pass --force"
     end
     # Convert the name and class name.
     app_path   = app_name.underscore

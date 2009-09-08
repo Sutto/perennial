@@ -1,6 +1,31 @@
 # cattr_* and class_inheritable_* are taken from
 # ActiveSupport. Included here to help keep the
 # codebase simple / clean.
+
+class Object
+  
+  unless respond_to?(:instance_variable_defined?)
+    def instance_variable_defined?(variable)
+      instance_variables.include?(variable.to_s)
+    end
+  end
+
+  def instance_values #:nodoc:
+    instance_variables.inject({}) do |values, name|
+      values[name.to_s[1..-1]] = instance_variable_get(name)
+      values
+    end
+  end
+
+  if RUBY_VERSION >= '1.9'
+    def instance_variable_names
+      instance_variables.map { |var| var.to_s }
+    end
+  else
+    alias_method :instance_variable_names, :instance_variables
+  end
+end
+
 class Class
   def cattr_reader(*syms)
     syms.flatten.each do |sym|
