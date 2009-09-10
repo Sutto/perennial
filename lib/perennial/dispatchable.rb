@@ -120,6 +120,7 @@ module Perennial
       # Handlers are called in the order they are registered.
       def register_handler(handler)
         unless handler.blank? || !handler.respond_to?(:handle)
+          handler.registered = true if handler.respond_to?(:registered=)
           Dispatchable.handler_mapping[self] << handler 
         end
       end

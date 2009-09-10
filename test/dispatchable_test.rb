@@ -44,6 +44,21 @@ class DispatchableTest < Test::Unit::TestCase
     
   end
   
+  class RegisterableHandler
+    
+    def registered=(value)
+      @registered = value
+    end
+    
+    def registered?
+      @registered ||= false
+    end
+    
+    def handle(name, opts = {})
+    end
+    
+  end
+  
   context 'marking a class as dispatchable' do
     
     setup do
@@ -167,6 +182,29 @@ class DispatchableTest < Test::Unit::TestCase
     
     should 'finish a before dispatching b' do
       assert_equal ["start-a", "end-a", "start-b", "end-b"], @handler.call_stack
+    end
+    
+  end
+  
+  context 'registering handlers' do
+    
+    setup do
+      @dispatcher = class_via(ExampleDispatcher).new
+      @handler    = class_via(RegisterableHandler).new
+    end
+    
+    should 'default to not being registered' do
+      assert !@handler.registered?
+    end
+    
+    should 'set registered on register_handler' do
+      @dispatcher.class.register_handler @handler
+      assert @handler.registered?
+    end
+    
+    should 'call registered= on the handler' do
+      mock(@handler).registered = true
+      @dispatcher.class.register_handler @handler
     end
     
   end
