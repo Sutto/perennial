@@ -17,12 +17,16 @@ module Perennial
       @table.send(:[]=, real_key(key), *values)
     end
     
-    def respond_to?(name)
-      return true
+    def respond_to?(name, rec = nil)
+      true
     end
     
     def id
-      self[:id] || super
+      self.has_key?(:id) ? self.id : super
+    end
+    
+    def dup
+      Nash.new(self.table)
     end
     
     def to_hash
@@ -70,10 +74,6 @@ module Perennial
     
     def merge(hash_or_nash)
       dup.merge! hash_or_nash
-    end
-    
-    def dup
-      Nash.new(self.table)
     end
     
     def reverse_merge!(hash_or_nash)
@@ -151,5 +151,11 @@ module Perennial
     end
     
     
+  end
+end
+
+class Hash
+  def to_nash
+    Perennial::Nash.new(self)
   end
 end

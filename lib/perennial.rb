@@ -11,7 +11,7 @@ module Perennial
   
   VERSION = "0.2.3.8"
   
-  has_library :dispatchable, :hookable, :loader, :logger,
+  has_library :dispatchable, :hookable, :loader, :logger, :nash,
               :loggable, :manifest, :settings, :argument_parser,
               :option_parser, :application, :generator, :daemon,
               :delegateable

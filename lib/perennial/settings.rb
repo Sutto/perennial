@@ -4,7 +4,8 @@ module Perennial
   class Settings
     
     cattr_accessor :configuration, :log_level, :verbose, :daemon
-                   
+  
+    @@configuration         = Perennial::Nash.new
     @@verbose               = false
     @@log_level             = :info
     @@daemon                = false
@@ -63,18 +64,13 @@ module Perennial
       end
       
       def setup!(options = {})
-        @@configuration = {}
+        @@configuration ||= Perennial::Nash.new
         settings_file = self.default_settings_path
         if File.exist?(settings_file)
           loaded_yaml = YAML.load(File.read(settings_file))
           @@configuration.merge!(lookup_settings_from(loaded_yaml))
         end
         @@configuration.merge! options
-        @@configuration.symbolize_keys!
-        # Generate a module 
-        mod = generate_settings_accessor_mixin
-        extend  mod
-        include mod
         @@setup = true
       end
       
@@ -89,35 +85,20 @@ module Perennial
         return true
       end
       
-      def [](key)
-        self.setup
-        return self.configuration[key.to_sym]
-      end
-      
-      def []=(key, value)
-        self.setup
-        self.configuration[key.to_sym] = value
-        return value
-      end
-      
       def to_hash
-        (self.configuration || {}).dup
+        @@configuration.to_hash
+      end
+      
+      def method_missing(name, *args, &blk)
+        self.setup! unless self.setup?
+        @@configuration.send(name, *args, &blk)
+      end
+      
+      def respond_to?(name, rec = nil)
+        true
       end
       
       protected
-      
-      def generate_settings_accessor_mixin
-        Module.new do
-          Settings.configuration.keys.each do |k|
-            define_method(k) do
-              return Settings.configuration[k]
-            end
-            define_method("#{k}=") do |val|
-              Settings.configuration[k] = val
-            end
-          end
-        end
-      end
       
       def lookup_settings_from(settings_hash)
         lookup_key_path.inject(settings_hash) do |h, k|
@@ -125,6 +106,15 @@ module Perennial
         end
       end
       
+    end
+    
+    def method_missing(name, *args, &blk)
+      self.class.setup
+      @@configuration.send(name, *args, &blk)
+    end
+    
+    def respond_to?(name, rec = nil)
+      true
     end
 
   end
