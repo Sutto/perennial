@@ -6,7 +6,12 @@ module Perennial
     def self.load_file(path)
       n = self.new
       if File.file?(path) && File.readable?(path)
-        contents = YAML.load_file()
+        contents = YAML.load_file(path)
+      end
+      if contents.is_a?(Hash)
+        contents.to_hash
+      else
+        new(:data => contents).normalized
       end
     end
     
