@@ -9,7 +9,7 @@ module Perennial
         contents = YAML.load_file(path)
       end
       if contents.is_a?(Hash)
-        contents.to_hash
+        contents.to_nash
       else
         new(:data => contents).normalized
       end
