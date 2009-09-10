@@ -101,7 +101,7 @@ module Perennial
       end
       
       def to_hash
-        self.configuration.dup
+        (self.configuration || {}).dup
       end
       
       protected
