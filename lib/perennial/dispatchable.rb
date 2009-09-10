@@ -46,8 +46,8 @@ module Perennial
       # == Params
       # +name+: The name of the current event
       # +opts+: an optional hash of options to pass
-      def dispatch(name, opts = {}, force = false)
-        if dispatch_queue.empty? || force
+      def dispatch(name, opts = {}, from_queue = false)
+        if dispatch_queue.empty? || from_queue
           Logger.debug "Dispatching #{name} event (#{dispatch_queue.size} queued - on #{self.class.name})"
           begin
             # The full handler name is the method we call given it exists.
@@ -77,7 +77,8 @@ module Perennial
           rescue Exception => e
             Logger.log_exception(e)
           end
-          dispatch(*dispatch_queue.shift) unless dispatch_queue.empty?
+          dispatch_queue.shift if from_queue
+          dispatch(*dispatch_queue.first) unless dispatch_queue.empty?
         else
           Logger.debug "Adding #{name} event to the end of the queue (on #{self.class.name})"
           dispatch_queue << [name, opts, true]
