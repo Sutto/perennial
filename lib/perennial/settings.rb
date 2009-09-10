@@ -71,6 +71,8 @@ module Perennial
           @@configuration.merge!(lookup_settings_from(loaded_yaml))
         end
         @@configuration.merge! options
+        # Finally, normalize settings
+        @@configuration = @@configuration.normalized
         @@setup = true
       end
       

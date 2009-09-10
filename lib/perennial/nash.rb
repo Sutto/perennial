@@ -1,6 +1,14 @@
+require 'yaml'
 module Perennial
   # A ninja hash. Like OpenStruct, but better
   class Nash
+    
+    def self.load_file(path)
+      n = self.new
+      if File.file?(path) && File.readable?(path)
+        contents = YAML.load_file()
+      end
+    end
     
     attr_reader :table
     
@@ -104,7 +112,7 @@ module Perennial
      
     def inspect
       str = ""
-      if first = Thread.current[:inspect_stack].nil?
+      if Thread.current[:inspect_stack].nil?
         Thread.current[:inspect_stack] = [self]
         str = _inspect
         Thread.current[:inspect_stack] = nil
@@ -129,8 +137,51 @@ module Perennial
       str << ">"
       return str
     end
+    
+    def hash
+      @table.hash
+    end
+    
+    def normalized(n = nil)
+      item = nil
+      if Thread.current[:normalized].nil?
+        n = self.class.new
+        Thread.current[:normalized] = {self => n}
+        item = normalize_nash(n)
+        Thread.current[:normalized] = nil
+      else
+        if Thread.current[:normalized].has_key?(self)
+          return Thread.current[:normalized][self]
+        else
+          n = self.class.new
+          Thread.current[:normalized][self] = n
+          item = normalize_nash(n)
+        end
+      end
+      item
+    end
      
     protected
+    
+    def normalize_nash(n = self.class.new)
+      each_pair do |k, v|
+        n[k] = normalize_item(v)
+      end
+      return n
+    end
+    
+    def normalize_item(i)
+      case i
+      when Hash
+        self.class.new(i).normalized
+      when Array
+        i.map { |v| normalize_item(v) }
+      when self.class
+        i.normalized
+      else
+        i
+      end
+    end
     
     def method_missing(name, *args, &blk)
       name = name.to_s
