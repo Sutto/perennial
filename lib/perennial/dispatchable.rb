@@ -36,39 +36,52 @@ module Perennial
         self.class.handlers
       end
       
+      def dispatch_queue
+        @dispatch_queue ||= []
+      end
+      
       # Dispatch an 'event' with a given name to the handlers
       # registered on the current class. Used as a nicer way of defining
       # behaviours that should occur under a given set of circumstances.
       # == Params
       # +name+: The name of the current event
       # +opts+: an optional hash of options to pass
-      def dispatch(name, opts = {})
-        # The full handler name is the method we call given it exists.
-        full_handler_name = :"handle_#{name.to_s.underscore}"
-        # First, dispatch locally if the method is defined.
-        self.send(full_handler_name, opts) if self.respond_to?(full_handler_name)
-        # Iterate through all of the registered handlers,
-        # If there is a method named handle_<event_name>
-        # defined we sent that otherwise we call the handle
-        # method on the handler. Note that the handle method
-        # is the only required aspect of a handler. An improved
-        # version of this would likely cache the respond_to?
-        # call.
-        self.handlers.each do |handler|
-          if handler.respond_to?(full_handler_name)
-            handler.send(full_handler_name, opts)
-          else
-            handler.handle name, opts
+      def dispatch(name, opts = {}, force = false)
+        if dispatch_queue.empty? || force
+          Logger.debug "Dispatching #{name} event (#{dispatch_queue.size} queued - on #{self.class.name})"
+          begin
+            # The full handler name is the method we call given it exists.
+            full_handler_name = :"handle_#{name.to_s.underscore}"
+            # First, dispatch locally if the method is defined.
+            self.send(full_handler_name, opts) if self.respond_to?(full_handler_name)
+            # Iterate through all of the registered handlers,
+            # If there is a method named handle_<event_name>
+            # defined we sent that otherwise we call the handle
+            # method on the handler. Note that the handle method
+            # is the only required aspect of a handler. An improved
+            # version of this would likely cache the respond_to?
+            # call.
+            self.handlers.each do |handler|
+              if handler.respond_to?(full_handler_name)
+                handler.send(full_handler_name, opts)
+              else
+                handler.handle name, opts
+              end
+            end
+          # If we get the HaltHandlerProcessing exception, we
+          # catch it and continue on our way. In essence, we
+          # stop the dispatch of events to the next set of the
+          # handlers.
+          rescue HaltHandlerProcessing => e
+            Logger.info "Halting processing chain"
+          rescue Exception => e
+            Logger.log_exception(e)
           end
+          dispatch(*dispatch_queue.shift) unless dispatch_queue.empty?
+        else
+          Logger.debug "Adding #{name} event to the end of the queue (on #{self.class.name})"
+          dispatch_queue << [name, opts, true]
         end
-      # If we get the HaltHandlerProcessing exception, we
-      # catch it and continue on our way. In essence, we
-      # stop the dispatch of events to the next set of the
-      # handlers.
-      rescue HaltHandlerProcessing => e
-        Logger.info "Halting processing chain"
-      rescue Exception => e
-        Logger.log_exception(e)
       end
       
     end

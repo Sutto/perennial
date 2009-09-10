@@ -70,8 +70,8 @@ class Module
   
   def add_extension(name, &blk)
     item = name.to_s.camelize.to_sym
-    return unless const_defined?(item)
-    target = const_get(item)
+    target = const_get(item) rescue nil
+    raise "Didn't find library for #{name}" if target.nil?
     if target.is_a?(Class)
       target.class_eval(&blk)
     elsif target.is_a?(Module)
