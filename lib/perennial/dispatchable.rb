@@ -40,15 +40,21 @@ module Perennial
         @dispatch_queue ||= []
       end
       
+      def dispatching?
+        @dispatching ||= false
+      end
+      
       # Dispatch an 'event' with a given name to the handlers
       # registered on the current class. Used as a nicer way of defining
       # behaviours that should occur under a given set of circumstances.
       # == Params
       # +name+: The name of the current event
       # +opts+: an optional hash of options to pass
-      def dispatch(name, opts = {}, from_queue = false)
-        if dispatch_queue.empty? || from_queue
+      def dispatch(name, opts = {})
+        if !dispatching?
           Logger.debug "Dispatching #{name} event (#{dispatch_queue.size} queued - on #{self.class.name})"
+          # Add ourselves to the queue
+          @dispatching = true
           begin
             # The full handler name is the method we call given it exists.
             full_handler_name = :"handle_#{name.to_s.underscore}"
@@ -77,11 +83,11 @@ module Perennial
           rescue Exception => e
             Logger.log_exception(e)
           end
-          dispatch_queue.shift if from_queue
-          dispatch(*dispatch_queue.first) unless dispatch_queue.empty?
+          @dispatching = false
+          dispatch(*@dispatch_queue.shift) unless dispatch_queue.empty?
         else
           Logger.debug "Adding #{name} event to the end of the queue (on #{self.class.name})"
-          dispatch_queue << [name, opts, true]
+          dispatch_queue << [name, opts]
         end
       end
       

@@ -22,6 +22,28 @@ class DispatchableTest < Test::Unit::TestCase
 
   class ExampleHandlerB < ExampleHandlerA; end
   
+  class ExampleHandlerC
+    attr_reader :max_count, :messages, :call_stack
+    def initialize(d)
+      @messages = []
+      @max_count = 0
+      @current_count = 0
+      @dispatcher = d
+      @call_stack = []
+    end
+    
+    def handle(name, opts)
+      @call_stack << "start-#{name}"
+      @current_count += 1
+      @messages << name
+      @dispatcher.dispatch(:b) if name == :a
+      @max_count = @current_count if @current_count > @max_count
+      @current_count -= 1
+      @call_stack << "end-#{name}"
+    end
+    
+  end
+  
   context 'marking a class as dispatchable' do
     
     setup do
@@ -123,6 +145,29 @@ class DispatchableTest < Test::Unit::TestCase
     end
     
     should 'log exceptions when encountered and not crash'
+    
+  end
+  
+  context 'dispatching nested events' do
+    
+    setup do
+      @dispatcher = class_via(ExampleDispatcher).new
+      @handler    = ExampleHandlerC.new(@dispatcher)
+      @dispatcher.class.register_handler @handler
+      @dispatcher.dispatch :a
+    end
+    
+    should 'call them in the correct order' do
+      assert_equal [:a, :b], @handler.messages
+    end
+    
+    should 'only call 1 dispatch at a time' do
+      assert_equal 1, @handler.max_count
+    end
+    
+    should 'finish a before dispatching b' do
+      assert_equal ["start-a", "end-a", "start-b", "end-b"], @handler.call_stack
+    end
     
   end
   
