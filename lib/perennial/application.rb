@@ -53,8 +53,8 @@ module Perennial
       @banners         = {}
     end
     
-    def option(name, description = nil)
-      option_parser.add(name, description) { |v| @command_options[name] = v }
+    def option(name, description = nil, opts = {})
+      option_parser.add(name, description, opts) { |v| @command_options[name] = v }
     end
     
     def add_default_options!
