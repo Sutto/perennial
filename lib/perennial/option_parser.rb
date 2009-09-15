@@ -52,9 +52,9 @@ module Perennial
     def add_defaults!
       return if defined?(@defaults_added) && @defaults_added
       logger_levels = Logger::LEVELS.keys.map { |k| k.to_s }
-      add(:daemon, 'Runs this application as a daemon') { Settings.daemon = true }
-      add(:verbose, 'Runs this application verbosely, writing to STDOUT') { Settings.verbose = true }
-      add(:log_level, "Sets this applications log level, one of: #{logger_levels.join(", ")}") do |level|
+      add(:daemon, 'Runs this application as a daemon', :shortcut => "d") { Settings.daemon = true }
+      add(:verbose, 'Runs this application verbosely, writing to STDOUT', :shortcut => "v") { Settings.verbose = true }
+      add(:log_level, "Sets this applications log level, one of: #{logger_levels.join(", ")}", :shortcut => "l") do |level|
         if logger_levels.include?(level)
           Settings.log_level = level.to_sym
         else
