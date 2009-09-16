@@ -73,6 +73,7 @@ module Perennial
       handler_directory = Settings.root / "handlers"
       if File.directory?(handler_directory)
         Dir[handler_directory / "**" / "*.rb"].each do |handler|
+          Perennial::Reloading.watch(handler, handler_directory)
           require handler
         end
       end

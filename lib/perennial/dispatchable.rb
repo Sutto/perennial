@@ -21,6 +21,10 @@ module Perennial
       @@handler_mapping ||= Hash.new { |h,k| h[k] = [] }
     end
     
+    def self.reloading_mapping
+      @@reloading_mapping ||= Hash.new { |h,k| h[k] = [] }
+    end
+    
     def self.included(parent)
       parent.class_eval do
         include InstanceMethods
@@ -122,6 +126,18 @@ module Perennial
         unless handler.blank? || !handler.respond_to?(:handle)
           handler.registered = true if handler.respond_to?(:registered=)
           Dispatchable.handler_mapping[self] << handler 
+        end
+      end
+      
+      def reloading!
+        handlers = Dispatchable.handler_mapping.delete(self)
+        Dispatchable.reloading_mapping[self.name] = handlers
+      end
+      
+      def reloaded!
+        if Dispatchable.reloading_mapping.has_key?(self.name)
+          handlers = Dispatchable.reloading_mapping.delete(self.name)
+          handlers.each { |h| register_handler(h) }
         end
       end
       
