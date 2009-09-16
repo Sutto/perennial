@@ -9,7 +9,7 @@ require 'perennial/exceptions'
 
 module Perennial
   
-  VERSION = "0.2.4.5"
+  VERSION = "0.2.4.6"
   
   has_library :dispatchable, :hookable, :loader, :logger, :nash,
               :loggable, :manifest, :settings, :argument_parser,

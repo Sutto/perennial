@@ -129,6 +129,12 @@ module Perennial
         end
       end
       
+      def delete_handler(handler)
+        return if handler.blank?
+        handler.registered = false if handler.respond_to?(:registered=)
+        Dispatchable.handler_mapping[self].delete(handler)
+      end
+      
       def reloading!
         handlers = Dispatchable.handler_mapping.delete(self)
         Dispatchable.reloading_mapping[self.name] = handlers
