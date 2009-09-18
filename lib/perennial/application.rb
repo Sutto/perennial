@@ -74,12 +74,13 @@ module Perennial
       controller_name = controller.to_s.underscore
       controller = controller.to_sym
       command_name = controller_name.gsub("_", "-")
+      parent = self
       add("#{command_name} #{"[PATH]" if !opts[:skip_path]}".strip, description) do |*args|
         options = args.extract_options!
         path = File.expand_path(args[0] || ".")
         Settings.root = path
         if options.delete(:kill)
-          attempt_showing_banner
+          parent.attempt_showing_banner
           puts "Attempting to kill processess for #{command_name}"
           Daemon.kill_all(controller)
         else
@@ -148,7 +149,7 @@ module Perennial
       end
       application.execute args
     end
-    
+  
     def attempt_showing_banner
       if banner.present?
         puts banner
