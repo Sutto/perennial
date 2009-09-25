@@ -43,7 +43,7 @@ module Perennial
     end
     
     def id
-      self.has_key?(:id) ? self.id : super
+      @table.has_key?(:id) ? @table[:id] : super
     end
     
     def dup
