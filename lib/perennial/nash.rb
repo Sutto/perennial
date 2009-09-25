@@ -1,7 +1,12 @@
 require 'yaml'
+require 'time'
+
 module Perennial
   # A ninja hash. Like OpenStruct, but better
   class Nash
+    
+    cattr_accessor :parse_times
+    @@parse_times = true
     
     def self.load_file(path)
       n = self.new
@@ -19,7 +24,10 @@ module Perennial
     
     def initialize(initial = {})
       @table = {}
-      initial.to_hash.each_pair { |k,v| self[k] = v }
+      initial.to_hash.each_pair do |k,v|
+        v = Time.parse(v) if @@parse_times && k.to_s =~ /_at$/ && v.is_a?(String)
+        self[k] = v
+      end
     end
     
     def [](key)
@@ -165,6 +173,10 @@ module Perennial
       end
       item
     end
+    
+    def to_nash
+      self
+    end
      
     protected
     
@@ -206,12 +218,17 @@ module Perennial
       name.to_sym
     end
     
-    
   end
 end
 
 class Hash
   def to_nash
     Perennial::Nash.new(self)
+  end
+end
+
+class NilClass
+  def to_nash
+    Perennial::Nash.new
   end
 end
