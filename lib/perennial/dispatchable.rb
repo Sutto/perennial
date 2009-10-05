@@ -59,6 +59,8 @@ module Perennial
           Logger.debug "Dispatching #{name} event (#{dispatch_queue.size} queued - on #{self.class.name})"
           # Add ourselves to the queue
           @dispatching = true
+          # TODO: improve performance. This should be dispatched per-request cycle.
+          pre_dispatching
           begin
             # The full handler name is the method we call given it exists.
             full_handler_name = :"handle_#{name.to_s.underscore}"
@@ -88,11 +90,18 @@ module Perennial
             Logger.log_exception(e)
           end
           @dispatching = false
-          dispatch(*@dispatch_queue.shift) unless dispatch_queue.empty?
+          dispatch(*@dispatch_queue.shift) if dispatch_queue.present?
+          post_dispatching
         else
           Logger.debug "Adding #{name} event to the end of the queue (on #{self.class.name})"
           dispatch_queue << [name, opts]
         end
+      end
+      
+      def pre_dispatching
+      end
+      
+      def post_dispatching
       end
       
     end

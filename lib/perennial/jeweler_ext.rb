@@ -22,6 +22,12 @@ module Perennial
         [@major, @minor, @patch, @build].compact
       end
       
+      def to_s
+        items = array
+        items.pop if items[3] == 0
+        items.join(".")
+      end
+      
       def main_library_file
         Perennial::JewelerExt.library_file
       end
