@@ -19,7 +19,7 @@ module Perennial
       end
       
       def array
-        [major, minor, patch, build]
+        [@major, @minor, @patch, @build].compact
       end
       
       def main_library_file
@@ -28,7 +28,6 @@ module Perennial
       
       def parse_version
         parts = Perennial::JewelerExt.version_array
-        puts 'Version array: ' + parts.inspect
         @major = parts[0]
         @minor = parts[1]
         @patch = parts[2]
