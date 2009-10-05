@@ -45,6 +45,7 @@ begin
     gem.add_development_dependency "thoughtbot-shoulda"
     gem.add_development_dependency "yard"
   end
+  Jeweler::GemcutterTasks.new
 rescue LoadError => e
   puts "Jeweler (or a dependency) not available. Install it with: sudo gem install jeweler"
 end
