@@ -45,7 +45,7 @@ module Perennial
     
     MATCH_REGEXP = /\<f\:(.+)\>(.*)\<\/f\:\1>/
     ESCAPE_TAG   = /\<\/?f\:escape\>/
-    ANSI_CODE    = /\033\[(?\d+\;?)+m/
+    ANSI_CODE    = /\033\[(?:\d+\;?)+m/
     
     cattr_accessor :formatted
     @@formatted = true

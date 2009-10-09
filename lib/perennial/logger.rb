@@ -40,6 +40,11 @@ module Perennial
        @@logger.send(name, *args, &blk)
       end
       
+      def warn(message)
+        self.setup
+        @@logger.warn(message)
+      end
+      
       def respond_to?(symbol, include_private = false)
         self.setup
         super(symbol, include_private) || @@logger.respond_to?(symbol, include_private)
@@ -57,7 +62,7 @@ module Perennial
   
     PREFIXES = {}
   
-    LEVELS.each { |k,v| PREFIXES[k] = "[#{k.to_s.upcase}]".ljust 7 }
+    LEVELS.each { |k,v| PREFIXES[k] = "[#{k.to_s.upcase}]".rjust 7 }
 
     COLOURS = {
       :fatal => "red",
@@ -83,7 +88,7 @@ module Perennial
   
     LEVELS.each do |name, value|
       define_method(name) do |message|
-        write(message, name) if LEVELS[@level] <= value
+        write(message.to_s, name) if LEVELS[@level] <= value
       end
     
       define_method(:"#{name}?") do
