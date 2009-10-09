@@ -14,8 +14,8 @@ class ReloadingTest < Test::Unit::TestCase
     end
     
     should 'call reloading on the old class if defined' do
-      ReloadingTest.expects(:respond_to?).with(:reloading).returns(true)
-      ReloadingTest.expects(:reloading)
+      ReloadingTest.expects(:respond_to?).with(:reloading!).returns(true)
+      ReloadingTest.expects(:reloading!)
       write_reloadable_klass :reloaded
       Perennial::Reloading.reload!
     end
@@ -50,21 +50,26 @@ class ReloadingTest < Test::Unit::TestCase
     end
     
     teardown do
-      File.delete @file
+      File.delete @file if File.exist?(@file)
+      Object.send(:remove_const, :ReloadingTest) if defined?(ReloadingTest)
     end
     
   end
   
   def write_reloadable_klass(value, include_reloaded = false)
+    u, a = Time.now, Time.now
+    u, a = File.atime(@file), File.mtime(@file) if File.exist?(@file)
     File.open(@file, "w+") do |f|
       f.puts "class ReloadingTest"
       f.puts "  RELOADED_VALUE = #{value.inspect}"
       f.puts "  cattr_accessor :count"
       f.puts "  self.count = 0"
       f.puts "  cattr_reader :was_reloaded"
-      f.puts "  def self.reloaded; @@was_reloaded = true; end" if include_reloaded
+      f.puts "  def self.reloaded!; @@was_reloaded = true; end" if include_reloaded
       f.puts "end"
     end
+    # We fake the mtime to simulate a proper, delay
+    File.utime(u + 3, a + 3, File.expand_path(@file))
   end
   
 end

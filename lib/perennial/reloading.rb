@@ -1,5 +1,6 @@
 module Perennial
   class Reloading
+    include Perennial::Loggable
     
     cattr_accessor :mapping, :mtimes
     self.mapping = {}

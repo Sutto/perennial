@@ -10,9 +10,19 @@ require 'redgreen' if RUBY_VERSION < "1.9"
 require 'pathname'
 root_directory = Pathname.new(__FILE__).dirname.join("..").expand_path
 require root_directory.join("lib", "perennial")
-require root_directory.join("vendor", "fakefs", "lib", "fakefs")
+# Require fakefs
+$:.unshift root_directory.join("vendor", "fakefs", "lib").to_s
+require "fakefs/safe"
 
 class Test::Unit::TestCase
+  
+  def self.with_fakefs(&blk)
+    context '' do
+      setup { FakeFS.activate! }
+      context('', &blk)
+      teardown { FakeFS.deactivate! }
+    end
+  end
   
   protected
   
