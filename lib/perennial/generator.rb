@@ -93,7 +93,7 @@ module Perennial
     
     def template(source, destination, environment = {}, append = false)
       describe "Processing template #{source}"
-      raw_template = File.read(expand_template_path(source))
+      raw_template = File.read(expand_template_path(source.to_s))
       processed_template = ERB.new(raw_template).result(binding_for(environment))
       file destination, processed_template, append
     end
