@@ -3,10 +3,6 @@ require File.join(File.dirname(__FILE__), "test_helper")
 require 'shellwords'
 
 class ArgumentParserTest < Test::Unit::TestCase
-
-  String.class_eval do
-    def to_args; Shellwords.shellwords(self); end
-  end
   
   context 'simple argument parsing' do
     
@@ -54,7 +50,7 @@ class ArgumentParserTest < Test::Unit::TestCase
   end
   
   def parse(s)
-    Perennial::ArgumentParser.parse s.to_args
+    Perennial::ArgumentParser.parse Shellwords.shellwords(s)
   end
   
 end

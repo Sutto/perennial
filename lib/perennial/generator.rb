@@ -6,6 +6,22 @@ require 'readline'
 module Perennial
   class Generator
     
+    class HashBinding
+      
+      def initialize(hash)
+        hash.each_pair { |k, v| instance_variable_set("@#{k}", v) }
+      end
+      
+      def to_binding
+        return binding()
+      end
+      
+      def self.for(h)
+        new(h).to_binding
+      end
+      
+    end
+    
     class CommandEnv < Perennial::Application::CommandEnv
       
       def initialize
@@ -94,19 +110,11 @@ module Perennial
     def template(source, destination, environment = {}, append = false)
       describe "Processing template #{source}"
       raw_template = File.read(expand_template_path(source.to_s))
-      processed_template = ERB.new(raw_template).result(binding_for(environment))
+      processed_template = ERB.new(raw_template).result(HashBinding.for(environment))
       file destination, processed_template, append
     end
     
     protected
-    
-    def binding_for(hash = {})
-      object = Object.new
-      hash.each_pair do |k, v|
-        object.instance_variable_set("@#{k}", v)
-      end
-      return object.send(:binding)
-    end
     
     def expand_template_path(p)
       File.expand_path(p, @template_path)
