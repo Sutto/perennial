@@ -79,6 +79,7 @@ module Perennial
       def update!(attributes = {})
         return if attributes.blank?
         settings_file = self.default_settings_path
+        FileUtils.mkdir_p(File.dirname(settings_file))
         settings = File.exist?(settings_file) ? YAML.load(File.read(settings_file)) : {}
         namespaced_settings = lookup_settings_from(settings)
         namespaced_settings.merge! attributes.stringify_keys
