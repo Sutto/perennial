@@ -79,7 +79,7 @@ module Perennial
       @verbose = verbose
       FileUtils.mkdir_p(File.dirname(path))
       @file    = File.open(path, "a+")
-      @file.sync = true
+      @file.sync = true if @file.respond_to?(:sync=)
     end
   
     def close!
