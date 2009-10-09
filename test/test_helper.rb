@@ -3,7 +3,7 @@ require 'rubygems'
 # Testing dependencies
 require 'test/unit'
 require 'shoulda'
-require 'rr'
+require 'mocha'
 # RedGreen doesn't seem to be needed under 1.9
 require 'redgreen' if RUBY_VERSION < "1.9"
 
@@ -13,7 +13,6 @@ require root_directory.join("lib", "perennial")
 require root_directory.join("vendor", "fakefs", "lib", "fakefs")
 
 class Test::Unit::TestCase
-  include RR::Adapters::TestUnit
   
   protected
   

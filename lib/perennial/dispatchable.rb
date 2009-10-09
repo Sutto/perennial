@@ -59,7 +59,6 @@ module Perennial
           Logger.debug "Dispatching #{name} event (#{dispatch_queue.size} queued - on #{self.class.name})"
           # Add ourselves to the queue
           @dispatching = true
-          # TODO: improve performance. This should be dispatched per-request cycle.
           pre_dispatching
           begin
             # The full handler name is the method we call given it exists.

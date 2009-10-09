@@ -28,8 +28,8 @@ class DelegateableTest < Test::Unit::TestCase
     should 'let you get the real target of the delegate' do
       @delegateable.delegate_to :awesome
       assert real = @delegateable.real_delegate
-      assert_raises(NoMethodError) { proxy.awesomesauce }
-      assert_raises(NoMethodError) { proxy.ninja_party }
+      assert_raises(NoMethodError) { real.awesomesauce }
+      assert_raises(NoMethodError) { real.ninja_party }
       assert_equal "awesome", real.to_s
     end
     

@@ -132,30 +132,28 @@ class DispatchableTest < Test::Unit::TestCase
     end
     
     should 'attempt to call handle_[event_name] on itself' do
-      mock(@dispatcher).respond_to?(:handle_sample_event) { true }
-      mock(@dispatcher).handle_sample_event(:awesome => true, :sauce => 2)
+      @dispatcher.expects(:respond_to?).with(:handle_sample_event).returns(true)
+      @dispatcher.expects(:handle_sample_event).with(:awesome => true, :sauce => 2)
       @dispatcher.dispatch :sample_event, :awesome => true, :sauce => 2
     end
     
     should 'attempt to call handle_[event_name] on each handler' do
-      mock(@handler).respond_to?(:handle_sample_event) { true }
-      mock(@handler).handle_sample_event(:awesome => true, :sauce => 2)
+      @handler.expects(:respond_to?).with(:handle_sample_event).returns(true)
+      @handler.expects(:handle_sample_event).with(:awesome => true, :sauce => 2)
       @dispatcher.dispatch :sample_event, :awesome => true, :sauce => 2
     end
     
-    should 'call handle on each handler if handle_[event_name] isn\'t defined' do
-      mock(@handler).respond_to?(:handle_sample_event) { false }
-      mock(@handler).handle(:sample_event, :awesome => true, :sauce => 2)
+    should 'XXX call handle on each handler if handle_[event_name] isn\'t defined' do
+      @handler.expects(:respond_to?).with(:handle_sample_event).returns(false)
+      @handler.expects(:handle).with(:sample_event, :awesome => true, :sauce => 2)
       @dispatcher.dispatch :sample_event, :awesome => true, :sauce => 2
     end
     
     should 'let you halt handler processing if you raise HaltHandlerProcessing' do
       handler_two = ExampleHandlerB.new
       @dispatcher.class.register_handler handler_two
-      mock(@handler).handle(:sample_event, :awesome => true, :sauce => 2) do
-        raise Perennial::HaltHandlerProcessing
-      end
-      dont_allow(handler_two).handle(:sample_event, :awesome => true, :sauce => 2)
+      @handler.expects(:handle).with(:sample_event, :awesome => true, :sauce => 2).raises(Perennial::HaltHandlerProcessing)
+      handler_two.expects(:handle).with(:sample_event, :awesome => true, :sauce => 2).never
       @dispatcher.dispatch :sample_event, :awesome => true, :sauce => 2
     end
     
@@ -203,7 +201,7 @@ class DispatchableTest < Test::Unit::TestCase
     end
     
     should 'call registered= on the handler' do
-      mock(@handler).registered = true
+      @handler.expects(:registered=).with(true)
       @dispatcher.class.register_handler @handler
     end
     
