@@ -19,6 +19,7 @@ begin
     gem.executables = FileList["bin/*"].to_a.map { |f| File.basename(f) }
     gem.platform    = Gem::Platform::RUBY
     gem.add_development_dependency "thoughtbot-shoulda"
+    gem.add_development_dependency "mocha"
     gem.add_development_dependency "yard"
   end
   Jeweler::GemcutterTasks.new

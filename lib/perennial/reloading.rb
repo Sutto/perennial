@@ -9,7 +9,7 @@ module Perennial
       file = File.expand_path(file)
       raise ArgumentError, "You must provide the path to a file" unless File.file?(file)
       relative = file.gsub(/^#{File.expand_path(relative_to)}\//, '')
-      name = relative.gsub(/\.rb$/, '').split("/").map { |part|part.camelize }.join("::")
+      name = relative.gsub(/\.rb$/, '').split("/").map { |part| part.camelize }.join("::")
       self.mapping[name] = file
       self.mtimes[file] = File.mtime(file)
     end
