@@ -60,11 +60,11 @@ module Perennial
     LEVELS.each { |k,v| PREFIXES[k] = "[#{k.to_s.upcase}]".ljust 7 }
 
     COLOURS = {
-      :fatal => 31, # red
-      :error => 33, # yellow
-      :warn  => 35, # magenta
-      :info  => 32, # green
-      :debug => 34  # white
+      :fatal => "red",
+      :error => "yellow",
+      :warn  => "magenta",
+      :info  => "green",
+      :debug => "blue"
     }
   
     attr_accessor :level, :file, :verbose
@@ -74,6 +74,7 @@ module Perennial
       @verbose = verbose
       FileUtils.mkdir_p(File.dirname(path))
       @file    = File.open(path, "a+")
+      @file.sync = true
     end
   
     def close!
@@ -82,7 +83,7 @@ module Perennial
   
     LEVELS.each do |name, value|
       define_method(name) do |message|
-        write("#{PREFIXES[name]} #{message}", name) if LEVELS[@level] <= value
+        write(message, name) if LEVELS[@level] <= value
       end
     
       define_method(:"#{name}?") do
@@ -105,13 +106,10 @@ module Perennial
     private
   
     def write(message, level = self.level)
-      @file.puts message
-      @file.flush
-      $stdout.puts colourize(message, level) if verbose?
-    end
-  
-    def colourize(message, level)
-      "\033[1;#{COLOURS[level]}m#{message}\033[0m"
+      c = COLOURS[level]
+      message = ANSIFormatter.new("<f:#{c}>#{PREFIXES[level]}</f:#{c}> #{ANSIFormatter.clean(message)}")
+      @file.puts   message.to_normal_s
+      $stdout.puts message.to_formatted_s if verbose?
     end
  
     

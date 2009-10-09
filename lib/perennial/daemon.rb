@@ -33,6 +33,8 @@ module Perennial
   # used to deal with checking the status of and killing
   # processes associated with a given loader type.
   class Daemon
+    include Perennial::Loggable
+    
     class << self
       
       def any_alive?(type = :all)
@@ -42,9 +44,12 @@ module Perennial
       # Returns true / false depending on whether
       # a process with the given pid exists.
       def alive?(pid)
-        return Process.getpgid(pid) != -1
+        Process.kill(0, pid)
+        return true
       rescue Errno::ESRCH
         return false
+      rescue SystemCallError => e
+  			return true
       end
       
       # Kills all processes associated with a certain app type.
@@ -61,16 +66,20 @@ module Perennial
       # Converts the current process into a Unix-daemon using
       # the double fork approach. Also, changes process file
       # mask to 000 and reopens STDIN / OUT to /dev/null
-      def daemonize!
-        fork_off_and_die
-        Process.setsid
-        fork_off_and_die
-        self.write_pid
-        File.umask    0000
-        STDIN.reopen  "/dev/null"
-        STDOUT.reopen "/dev/null", "a"
-        STDERR.reopen STDOUT
-        Perennial::Settings.verbose = false
+      def daemonize!(should_exit = true)
+        if detached_fork { exit if should_exit }
+          Process.setsid
+          detached_fork { exit }
+          reinitialize_stdio
+          yield if block_given?
+        end
+      end
+      
+      def daemonize_current_type!
+        daemonize! do
+          write_pid
+          Perennial::Settings.verbose = false
+        end
       end
       
       # Cleans up processes for the current application type
@@ -87,12 +96,19 @@ module Perennial
       
       protected
 
+      def reinitialize_stdio
+        File.umask    0000
+        STDIN.reopen  "/dev/null"
+        STDOUT.reopen "/dev/null", "a"
+        STDERR.reopen STDOUT
+      end
+
       def kill_all_from(file)
         pids = pids_from(file)
         pids.each { |p| Process.kill("TERM", p) unless p == Process.pid }
         FileUtils.rm_f(file)
       rescue => e
-        STDOUT.puts e.inspect
+        Perennial::Logger.log_exception(e)
       end
 
       def pid_file_for(type)
@@ -105,7 +121,7 @@ module Perennial
         Dir[files].each do |file|
           pids += File.read(file).split("\n").map { |l| l.strip.to_i(10) }
         end
-        return pids.uniq.select { |p| alive?(p) }
+        pids.uniq.select { |p| alive?(p) }
       end
 
       def write_pid
@@ -118,11 +134,13 @@ module Perennial
         File.open(f, "w+") { |f| f.puts pids.join("\n") }
       end
       
-      def fork_off_and_die
-        if pid = fork
+      def detached_fork
+        pid = fork
+        unless pid.nil?
           Process.detach(pid)
-          exit
+          yield if block_given?
         end
+        pid
       end
       
     end

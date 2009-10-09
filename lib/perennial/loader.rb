@@ -33,7 +33,7 @@ module Perennial
     def run!(options = {})
       self.register_signals
       self.class.invoke_hooks! :before_setup
-      Daemon.daemonize! if Settings.daemon?
+      Daemon.daemonize_current_type! if Settings.daemon?
       Logger.log_name = "#{@@current_type.to_s}.log"
       Logger.setup
       Settings.setup

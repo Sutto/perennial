@@ -6,21 +6,25 @@ class Hash
   end
   
   def symbolize_keys!
-    hash = {}
-    self.each_pair { |k,v| hash[k.to_sym] = v }
-    replace hash
+    convert_keys_via :to_sym
   end
   
   def stringify_keys!
-    hash = {}
-    self.each_pair { |k, v| hash[k.to_s] = v }
-    replace hash
+    convert_keys_via :to_s
   end
   
   def stringify_keys
     hash = self.dup
     hash.stringify_keys!
     return hash
+  end
+  
+  protected
+  
+  def convert_keys_via(method)
+    hash = {}
+    self.each_pair { |k,v| hash[k.send(method)] = v }
+    replace hash
   end
   
 end
