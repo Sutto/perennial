@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{perennial}
-  s.version = "1.0.1"
+  s.version = "1.0.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Darcy Laycock"]
-  s.date = %q{2009-10-05}
+  s.date = %q{2009-10-09}
   s.default_executable = %q{perennial}
   s.description = %q{Perennial is a platform for building different applications in Ruby. It uses a controller-based approach with mixins to provide different functionality.}
   s.email = %q{sutto@sutto.net}
@@ -23,6 +23,7 @@ Gem::Specification.new do |s|
      "lib/perennial/application.rb",
      "lib/perennial/argument_parser.rb",
      "lib/perennial/core_ext.rb",
+     "lib/perennial/core_ext/ansi_formatter.rb",
      "lib/perennial/core_ext/attribute_accessors.rb",
      "lib/perennial/core_ext/blank.rb",
      "lib/perennial/core_ext/hash_key_conversions.rb",
@@ -57,13 +58,17 @@ Gem::Specification.new do |s|
   s.rubygems_version = %q{1.3.5}
   s.summary = %q{A simple (generally event-oriented) application library for Ruby}
   s.test_files = [
-    "test/delegateable_test.rb",
+    "test/argument_parser_test.rb",
+     "test/delegateable_test.rb",
      "test/dispatchable_test.rb",
+     "test/generator_test.rb",
      "test/hookable_test.rb",
      "test/loader_test.rb",
      "test/loggable_test.rb",
      "test/logger_test.rb",
+     "test/option_parser_test.rb",
      "test/proxy_test.rb",
+     "test/reloading_test.rb",
      "test/settings_test.rb",
      "test/test_helper.rb"
   ]
@@ -74,13 +79,16 @@ Gem::Specification.new do |s|
 
     if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
       s.add_development_dependency(%q<thoughtbot-shoulda>, [">= 0"])
+      s.add_development_dependency(%q<mocha>, [">= 0"])
       s.add_development_dependency(%q<yard>, [">= 0"])
     else
       s.add_dependency(%q<thoughtbot-shoulda>, [">= 0"])
+      s.add_dependency(%q<mocha>, [">= 0"])
       s.add_dependency(%q<yard>, [">= 0"])
     end
   else
     s.add_dependency(%q<thoughtbot-shoulda>, [">= 0"])
+    s.add_dependency(%q<mocha>, [">= 0"])
     s.add_dependency(%q<yard>, [">= 0"])
   end
 end
