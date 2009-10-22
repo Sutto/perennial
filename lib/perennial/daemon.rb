@@ -67,7 +67,7 @@ module Perennial
       # the double fork approach. Also, changes process file
       # mask to 000 and reopens STDIN / OUT to /dev/null
       def daemonize!(should_exit = true)
-        if detached_fork { exit if should_exit }
+        if detached_fork { exit if should_exit }.nil?
           Process.setsid
           detached_fork { exit }
           reinitialize_stdio
