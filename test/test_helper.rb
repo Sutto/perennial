@@ -1,11 +1,9 @@
 require 'rubygems'
 
 # Testing dependencies
-require 'test/unit'
+require 'leftright' if RUBY_VERSION < '1.9'
 require 'shoulda'
 require 'mocha'
-# RedGreen doesn't seem to be needed under 1.9
-require 'redgreen' if RUBY_VERSION < "1.9"
 
 require 'pathname'
 root_directory = Pathname.new(__FILE__).dirname.join("..").expand_path

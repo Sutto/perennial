@@ -30,6 +30,11 @@ module Kernel
   def P(&blk)
     Proc.new(&blk)
   end
+  
+  def N(*args)
+    Perennial::Nash.new(*args)
+  end
+  
 end
 
 class String
@@ -95,7 +100,7 @@ end
 class Class
   
   def is(*mixins)
-    ns = Perennial::Manifest.namespace
+    ns = Perennial::Manifest[self].namespace
     return if ns.blank?
     mixins.each do |mixin|
       begin
