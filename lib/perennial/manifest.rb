@@ -35,7 +35,7 @@ module Perennial
       def manifest(&blk)
         namespace = self
         app_name  = self.name.to_s.underscore
-        manifest = add_manifest(app_name, namespace)
+        manifest = Perennial::Manifest.add_manifest(app_name, namespace)
         parent_folder = File.expand_path(File.dirname(__DIR__(0)))
         Settings.library_root = parent_folder
         libary_folder = parent_folder / 'lib'/ app_name
