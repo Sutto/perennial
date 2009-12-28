@@ -23,7 +23,7 @@ module Perennial
       end
       
       def root=(path)
-        @@root = File.expand_path(path.to_str)
+        @@root = File.expand_path(path.respond_to?(:to_path) ? path.to_path : path.to_str)
       end
       
       def root

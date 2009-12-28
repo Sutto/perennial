@@ -118,7 +118,7 @@ module Perennial
 
       def pids_from(files)
         pids = []
-        Dir[files].each do |file|
+        Dir[files.to_s].each do |file|
           pids += File.read(file).split("\n").map { |l| l.strip.to_i(10) }
         end
         pids.uniq.select { |p| alive?(p) }
