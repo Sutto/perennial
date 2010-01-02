@@ -14,7 +14,7 @@ module Perennial
           cattr_accessor :event_handlers
           
           include InstanceMethods
-          extend Class
+          extend  ClassMethods
           
           self.event_handlers = Hash.new { |h,k| h[k] = [] }
           
@@ -117,7 +117,7 @@ module Perennial
         end
         
         def ssl_enabled?
-          instance_variable_defined?(:ssl_enabled) && @ssl_enabled
+          instance_variable_defined?(:@ssl_enabled) && @ssl_enabled
         end
         
         def options_for_callback(blk)
@@ -165,9 +165,9 @@ module Perennial
         end
         
         def process_action(name, data)
-          self.handlers[name.to_s].each do |handler|
+          self.event_handlers[name.to_s].each do |handler|
             if handler.respond_to?(:call)
-              handler.call(data)
+              handler.call(data, self)
             elsif handler.respond_to?(:handle)
               handler.handle(data)
             else
@@ -183,10 +183,10 @@ module Perennial
       
       module ClassMethods
         
-        def self.on_action(name, handler = nil, &blk)
+        def on_action(name, handler = nil, &blk)
           real_name = name.to_s
-          self.event_handlers[real_name] << blk    if blk.present?
-          self.event_handlers[real_name] << method if handler.present?
+          self.event_handlers[real_name] << blk     if blk.present?
+          self.event_handlers[real_name] << handler if handler.present?
         end
         
       end
