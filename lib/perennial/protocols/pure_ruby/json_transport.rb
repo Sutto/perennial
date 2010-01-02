@@ -26,6 +26,9 @@ end
 
 class Perennial::Protocols::PureRuby::JSONTransport
   
+  class Error < StandardError; end
+  class NoConnection < Error; end
+  
   @@callbacks = {}
   
   RETRY_DELAY = 30.0
@@ -51,10 +54,18 @@ class Perennial::Protocols::PureRuby::JSONTransport
   
   def read_message
     with_socket do |s|
-      message = JSON.parse(s.gets.strip)
-      return false if !message.is_a?(Hash)
+      raise NoConnection, "no connection the server at #{@host}:#{@port}" if s.nil?
+      message = nil
+      begin
+        Perennial::TimerImplementation.timeout(timeout) do
+          message = JSON.parse(s.gets.strip)
+        end
+      rescue Timeout::Error
+        return nil, nil
+      end
+      return nil, nil if !message.is_a?(Hash)
       action, payload = message["action"], message["payload"]
-      return false if !action.is_a?(String)
+      return nil, nil if !action.is_a?(String)
       payload = {} unless payload.is_a?(Hash)
       # We have a processed callback - huzzah!
       if payload.has_key?("callback-id")
