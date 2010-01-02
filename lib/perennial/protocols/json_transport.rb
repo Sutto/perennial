@@ -167,7 +167,7 @@ module Perennial
         def process_action(name, data)
           self.event_handlers[name.to_s].each do |handler|
             if handler.respond_to?(:call)
-              handler.call(data, self)
+              instance_exec(data, &handler)
             elsif handler.respond_to?(:handle)
               handler.handle(data)
             else
