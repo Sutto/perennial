@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{perennial}
-  s.version = "1.2.0"
+  s.version = "1.2.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Darcy Laycock"]
@@ -28,6 +28,7 @@ Gem::Specification.new do |s|
      "lib/perennial/core_ext/blank.rb",
      "lib/perennial/core_ext/hash_key_conversions.rb",
      "lib/perennial/core_ext/inflections.rb",
+     "lib/perennial/core_ext/instance_exec.rb",
      "lib/perennial/core_ext/misc.rb",
      "lib/perennial/core_ext/proxy.rb",
      "lib/perennial/daemon.rb",
