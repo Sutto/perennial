@@ -49,15 +49,18 @@ class Perennial::Protocols::PureRuby::JSONTransport
       "payload" => payload,
       "sent-at" => Time.now
     }.merge(callback_options(callback))) + SEPERATOR
-    with_socket { |s| s.write(message) }
+    with_socket do |s|
+      raise NoConnection, "no connection the server at #{@host}:#{@port}" if s.nil?
+      s.write(message)
+    end
   end
   
-  def read_message
+  def read_message(timeout = nil)
     with_socket do |s|
       raise NoConnection, "no connection the server at #{@host}:#{@port}" if s.nil?
       message = nil
       begin
-        Perennial::TimerImplementation.timeout(timeout) do
+        Perennial::TimerImplementation.timeout(timeout || @timeout) do
           message = JSON.parse(s.gets.strip)
         end
       rescue Timeout::Error
@@ -118,7 +121,6 @@ class Perennial::Protocols::PureRuby::JSONTransport
       @socket.setsockopt Socket::IPPROTO_TCP, Socket::TCP_NODELAY, 1
       @retry = nil
     rescue SocketError, SystemCallError, IOError, Timeout::Error => err
-      # TODO: Raise a connection error here
       dead!
     end
     @socket
