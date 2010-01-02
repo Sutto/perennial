@@ -7,8 +7,8 @@ require PERENNIAL_MAIN_FILE
 begin
   require 'jeweler'
   require 'perennial/jeweler_ext'
-  Jeweler.versioning_via PERENNIAL_MAIN_FILE, Perennial::VERSION
   Jeweler::Tasks.new do |gem|
+    gem.version     = Perennial::VERSION.join(".")
     gem.name        = "perennial"
     gem.summary     = "A simple (generally event-oriented) application library for Ruby"
     gem.description = "Perennial is a platform for building different applications in Ruby. It uses a controller-based approach with mixins to provide different functionality."
