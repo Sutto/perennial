@@ -20,8 +20,11 @@ module Perennial
         result.downcase[0] == ?y
       end
       
-      def ask(question, default)
-        result = Readline.readline("#{question.to_s.strip} (default: #{default}) ")
+      def ask(question, default = nil)
+        question_text = question.to_s.strip
+        question_text << " "
+        question_text << "(default: #{default}) " unless default.nil?
+        result = Readline.readline(question_text)
         result.blank? ? default : result
       end
       
